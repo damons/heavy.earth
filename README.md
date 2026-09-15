@@ -55,12 +55,14 @@ The **Panel workshop** tab is the beginning of the hand-drawn map pipeline:
 3. Draw from the shared HE8 template: **½ × ¼ inch diamonds, exact 2:1 slope, top-left origin**. Crop the scan to the board edges and compare it to the fixed overlay.
 4. Preview a black/white threshold and inspect sampled pixels.
 5. Mark reviewed cells as walkable or blocked.
-6. Add passage endpoints, choose their directions, and link them between panels. Links are reciprocal.
-7. Record each panel’s assembly coordinates and export a JSON draft; import it to continue later.
+6. Add passage endpoints between panels on the same level. Assign dungeon levels and mark stairs, pits, landings, local steps, elevators, and magical transport separately.
+7. Record each panel’s assembly coordinates and export a version-3 JSON draft; import it to continue later. Mark walls, objects, and items, then export exact diamond cuts using **Export marked cell artwork**.
 
 Try [the synthetic two-panel draft](examples/two-panel-draft.json) using **Import panel draft**, or the [synthetic scan](game/tests/fixtures/panel-scan.png) using **Add scanned panel**. These are calibration fixtures, not hand-drawn art or playable dungeon maps.
 
-For richer scan tests, try the [four original ink dungeon panels](examples/ink-panels/README.md): entrance hall, shrine, cistern, and ossuary. The pack includes PNGs and an importable draft. These AI-generated drawings require grid alignment review; they are not exact calibration fixtures or playable maps.
+For exact geometry and artwork-slicing tests, use the [four calibrated, grid-first panels](examples/calibrated-panels/README.md), including a two-level navigation draft. See [level markers and cell exports](docs/PANEL-NAVIGATION.md).
+
+The earlier [four original ink dungeon panels](examples/ink-panels/README.md)—entrance hall, shrine, cistern, and ossuary—remain visual references. The pack includes PNGs and an importable draft. These AI-generated drawings require grid alignment review; they are not exact calibration fixtures or playable maps.
 
 The workshop works locally in the browser and sends no artwork to the Rust server. It exports 800 × 800 grayscale preview images inside the draft. **Keep original high-resolution scans separately.** Drafts are not autosaved; export before closing. Imports merge into the current workshop and reject duplicate IDs.
 

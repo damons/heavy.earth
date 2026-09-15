@@ -25,8 +25,10 @@ The intended source medium is pen and ink / scratch art on Ampersand Claybord pa
 - Automated checks of actual template edges and arbitrary board placements.
 - Adjustable threshold preview with pixel inspection.
 - Explicit walkable/blocked annotations, separate from image pixels.
-- Named panels, assembly coordinates, connector locations and directions.
-- Reciprocal passage links; portable JSON export/import with preview art.
+- Named panels, per-level assembly coordinates, same-level passages, and typed level-navigation markers.
+- Stairs up/down, one-way pits/landings, local steps, elevators, and engine-governed transport markers; explicit adjacent-level destinations.
+- Grid-first vector sample panels with exact floor polygons; wall/object/item cell tags and transparent diamond artwork cuts.
+- Reciprocal passage links; portable version-3 JSON export/import with preview art and compatible v2 upgrade.
 
 Still needed before this becomes a production authoring tool:
 
@@ -36,7 +38,8 @@ Still needed before this becomes a production authoring tool:
 - High-resolution originals, nondestructive crop/deskew, image rotation and perspective correction; distinguish scanning resolution from in-world scale.
 - A visual overview for arranging an entire mosaic of physical panels.
 - Undo/redo, draft autosave, project asset storage, panel replacement/removal, and export validation reports.
-- Fixture and spawn authoring separate from walkability.
+- Full fixture identities, multi-cell object footprints, spawn authoring and independent passability; cell category tags and travel markers are implemented.
+- Full-resolution cutting, isolated sprites, hidden-floor reconstruction, multiple elevation layers within one physical scan, and configurable custom-world transition rules.
 
 ## 3. Convert reviewed scans into navigable maps — planned
 
@@ -56,7 +59,7 @@ The drawing remains the visual authority. The reviewed navigation graph is the g
 - Introduce a map-provider interface that can read both legacy DND maps and reviewed panel graphs.
 - Use stable panel IDs, local cell coordinates, and explicit connectors; physical mosaic neighbors do not imply a traversable connection.
 - Require aligned scale and compatible passage directions/elevation.
-- Validate links reciprocally and move the player exactly to the destination endpoint.
+- Validate same-level links reciprocally and move the player exactly to the destination endpoint. Respect directed level transitions, one-way drops, and engine-governed transporter choices/random teleportation.
 - Define visibility, exploration memory, encounter generation, room IDs, and save compatibility across seams.
 - Remove the current legacy provider’s 20 × 20 × 20 size assumption for custom worlds without changing the pinned legacy behavior.
 - Keep custom-world saves distinct and versioned. Never reinterpret legacy coordinates as panel coordinates.

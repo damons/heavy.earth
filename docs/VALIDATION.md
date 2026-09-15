@@ -7,8 +7,9 @@
 - `cargo clippy --workspace --all-targets -- -D warnings`: passed.
 - `cargo fmt --all --check`: passed.
 - `cargo build --release --locked`: passed on macOS with Rust 1.95.
-- `npm test`: **7 passing tests** — 6,400 projection/inverse tile-picking checks, 625 arbitrary board positions, panel permutations, exact SVG seam crossings on all four edges, fixed-standard/legacy rejection, reciprocal links, malformed drafts, and the HE8 example project.
+- `npm test`: **15 passing tests** — 6,400 projection/inverse tile-picking checks, 625 arbitrary board positions, panel permutations, exact SVG seam crossings on all four edges, fixed-standard/legacy rejection, reciprocal links, malformed drafts, and the HE8 example project.
 - Half-inch grid update: 0.5 × 0.25 inch diamonds; 16 horizontal and 32 vertical repeats per board. SVG checks cover all 94 lines, with 62 interior endpoints on each vertical edge and 30 on each horizontal edge. Coarse 1-inch drafts are explicitly rejected.
+- Grid-first samples: every SVG floor polygon and sidecar polygon matches `cellPolygon`; 2,860 crop positions verify exact size, center, area and slopes. Version-3 tests cover nonmutating v2 upgrade, per-level slots, directed stair/pit links, invalid targets, transport modes and same-level passage constraints.
 - PDF checks: two US Letter pages; the tracing square is exactly 576 × 576 points (8 × 8 inches); both pages rendered and visually inspected. The PDF/SVG and fixture generator reads the shared grid module.
 - `python3 scripts/verify_engine.py`: all **56 files** match the pinned DND snapshot.
 - `python3 scripts/smoke_http.py`: passed against a real server using disposable saves. Covers embedded assets, character creation, actions, stale commands, Host/Origin validation, invalid levels/save IDs, explored maps, and save/resume after server restart.
@@ -27,6 +28,14 @@ Checked the local game in the Codex browser:
 - The half-inch workshop label and updated two-panel example import were verified in the browser, including the reciprocal passage at cell (18, 12).
 - The running adventure was restored after the build update; its save file remained byte-for-byte unchanged.
 - No browser warnings/errors were reported during the gameplay checks.
+
+## Calibrated-panel and navigation follow-up
+
+- Four calibrated SVG/PNG panels rendered and visually inspected; their v3 draft imports with stairs, pit/landing, local steps and transport markers.
+- Verified the rendered destination selectors and that removing a landing clears the incoming pit link to Unassigned.
+- Grid and cell-tag visibility controls allow inspection of the artwork beneath annotations.
+- Downloaded the actual browser-generated entrance atlas: all 324 embedded PNGs are 50 × 25 RGBA images with transparent corners. The first 24 crop canvases were also inspected in the UI.
+- The generator uses the grid before adding artwork. No AI-painted floor grid is treated as calibrated geometry.
 
 ## Limits
 

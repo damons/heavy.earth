@@ -35,6 +35,8 @@ Drawing uses deterministic texture formulas independent of gameplay RNG. There i
 
 ## Custom worlds
 
-Panel draft version 2 enforces the HE8 physical standard and rejects legacy 30° version-1 drafts and earlier 1-inch-diamond drafts without changing their files or annotations. Grid alignment is independent of connection placement. Original game save coordinates do not change.
+Panel draft versions 2 and 3 enforce the HE8 physical standard and rejects legacy 30° version-1 drafts and earlier 1-inch-diamond drafts without changing their files or annotations. Grid alignment is independent of connection placement. Original game save coordinates do not change.
 
 The current engine addresses hardcoded original `Dungeon` data and 20 × 20 × 20 coordinates. Panel metadata cannot simply be attached to it to make arbitrary maps playable. The next stage needs a deliberate map-provider abstraction, stable room IDs, custom-world state, connector transitions, and versioned saves. Keep the legacy provider’s behavior covered by original oracle tests while introducing that extension separately.
+
+The version-3 workshop adds per-panel dungeon levels, directed level markers, cell classifications and exact diamond art exports. Half-inch v2 drafts upgrade with level 1 and no vertical markers. All of this is authoring metadata; the game engine does not consume custom-panel navigation yet. See [panel navigation](PANEL-NAVIGATION.md).

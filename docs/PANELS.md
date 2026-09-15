@@ -47,7 +47,7 @@ Printer scaling, scanner skew, cropping mistakes, board manufacturing tolerance,
 
 ## Panel placement versus dungeon connections
 
-`assembly: [column, row]` means a physical offset of `[column × 8, row × 8]` inches. Negative coordinates are allowed. Overlapping slots are rejected. Placement does not change a panel’s local grid origin.
+`assembly: [column, row]` means a physical offset of `[column × 8, row × 8]` inches. Negative coordinates are allowed. Overlapping slots on the same dungeon level are rejected in version 3. Placement does not change a panel’s local grid origin.
 
 Grid seams match for any compliant neighbor. Doors and tunnels only connect if the artwork and authored endpoints agree. Two arbitrary dungeon drawings are not guaranteed to have a doorway at the same location. Passage conventions, edge validation, and custom-panel gameplay are separate roadmap work.
 
@@ -61,7 +61,9 @@ Grid seams match for any compliant neighbor. Doors and tunnels only connect if t
 
 The prototype exports 800-pixel grayscale PNG previews. Keep original scans for future nondestructive registration and full-resolution rendering. A wrongly aligned image must be corrected; moving or resizing the grid to fit it would break interchangeability.
 
-## Portable authoring draft, version 2
+## Portable authoring draft
+
+The example below shows the supported version-2 input format. New exports use version 3 with per-panel levels, typed level markers and richer cell tags; see [navigation and cell-art schema](PANEL-NAVIGATION.md). Existing half-inch v2 drafts upgrade without moving their cells.
 
 ```json
 {
@@ -94,7 +96,7 @@ The prototype exports 800-pixel grayscale PNG previews. Keep original scans for 
 }
 ```
 
-Grid properties are fixed, not independent calibration knobs. Import/export rejects 10-inch boards, a different pitch, shifted origins, a different TOP orientation, mismatched projection, and duplicate assembly positions. It also checks unique IDs, image/annotation shapes, and reciprocal cross-panel links. A project supports at most 16 panels and 100 connectors per panel.
+Grid properties are fixed, not independent calibration knobs. Import/export rejects 10-inch boards, a different pitch, shifted origins, a different TOP orientation, mismatched projection, and duplicate assembly positions. It also checks unique IDs, image/annotation shapes, and reciprocal same-level cross-panel links. A project supports at most 16 panels and 100 connectors per panel.
 
 A connector’s `target` identifies another panel’s connector, whose `target` points back. Unlinked endpoints are valid in a draft. Draft validation does not imply the image conforms, navigation is classified correctly, or passages align physically. This is not yet a runtime dungeon format.
 

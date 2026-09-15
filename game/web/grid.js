@@ -68,3 +68,23 @@ export function panelGridSegments() {
   }
   return lines;
 }
+
+// Ground-plane polygon shared by annotation, slicing, and authored sample art.
+export function cellPolygon(x, y, pitch = PANEL.pitchPixels) {
+  return [
+    [x, y],
+    [x + 1, y],
+    [x + 1, y + 1],
+    [x, y + 1],
+  ].map(([u, v]) => project(u, v, pitch));
+}
+export function cellCropGeometry(x, y, pitch = PANEL.pitchPixels) {
+  const polygon = cellPolygon(x, y, pitch);
+  return {
+    polygon,
+    left: Math.min(...polygon.map((p) => p.x)),
+    top: Math.min(...polygon.map((p) => p.y)),
+    width: pitch,
+    height: pitch / 2,
+  };
+}

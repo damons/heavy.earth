@@ -258,6 +258,18 @@
             /></label>
           </div>
           <label
+            >Dungeon level<input
+              id="panel-level"
+              type="number"
+              min="0"
+              max="1000"
+              value="1"
+          /></label>
+          <p class="muted">
+            Level 0 is the surface; higher numbers go deeper. Panels can share
+            an assembly position on different levels.
+          </p>
+          <label
             >Ink threshold <output id="threshold-value">150</output
             ><input
               id="panel-threshold"
@@ -273,10 +285,17 @@
               <option value="inspect">Inspect cell</option>
               <option value="open">Mark walkable</option>
               <option value="blocked">Mark blocked</option>
+              <option value="wall">Mark wall</option>
+              <option value="object">Mark object</option>
+              <option value="item">Mark item</option>
               <option value="connector">Add connector</option>
+              <option value="level-marker">Add level marker</option>
               <option value="erase">Erase cell annotation</option>
             </select></label
-          ><button id="export-panels" class="primary full">
+          ><label
+            >Level marker kind<select id="level-marker-kind"></select
+          ></label>
+          <button id="export-panels" class="primary full">
             Export panel draft ↓</button
           ><label class="file-button secondary" role="button" tabindex="0"
             >Import panel draft<input
@@ -284,9 +303,28 @@
               id="import-panels"
               accept="application/json,.json"
           /></label>
+          <button id="export-cell-crops" class="secondary full">
+            Export marked cell artwork ↓
+          </button>
+          <p class="muted">
+            Cell tags: ○ walkable · × blocked · ▥ wall · O object · ◆ item.
+            Object/item tags need separate navigation review. Artwork exports
+            use exact diamond cuts without editor overlays.
+          </p>
+          <p id="panel-artifact-download" class="muted"></p>
           <p id="panel-feedback" role="status" class="muted"></p>
         </aside>
         <section>
+          <div class="panel-view-options">
+            <label class="check"
+              ><input type="checkbox" id="show-panel-grid" checked /> Show grid
+              overlay</label
+            >
+            <label class="check"
+              ><input type="checkbox" id="show-panel-cells" checked /> Show cell
+              tags</label
+            >
+          </div>
           <div class="panel-top">↑ TOP — KEEP THIS EDGE UP ON EVERY PANEL</div>
           <div class="panel-canvas-wrap">
             <canvas
@@ -303,13 +341,31 @@
             ><span>Draft only · not loaded into gameplay</span>
           </div>
           <div class="connection-heading">
-            <h3>Passages between panels</h3>
+            <h3>Passages on this level</h3>
             <span class="muted"
               >Mark a connector, then link it to another panel’s
               connector.</span
             >
           </div>
           <div id="panel-connections"></div>
+          <div class="connection-heading">
+            <h3>Level navigation and local steps</h3>
+            <p class="muted">
+              Mark stairs, pits, arrival points, or magical transport. Fixed
+              links are one-way; add a return stair separately. Put up and down
+              markers on the same cell for a staircase serving both directions.
+            </p>
+          </div>
+          <div id="panel-level-connections"></div>
+          <details id="cell-crop-results" hidden>
+            <summary>Cell artwork preview — first 24 cuts</summary>
+            <p class="muted">
+              50 × 25 pixel diamond crops, with transparent corners. Full export
+              includes every marked cell. These are ground-plane cuts of the
+              visible illustration; a tall object may span several cuts.
+            </p>
+            <div id="cell-crop-preview"></div>
+          </details>
           <p class="muted panel-caveat">
             Thresholding is a visual preview. White cells still need review:
             grid lines, hatching, and drawn fixtures can look like walls. The

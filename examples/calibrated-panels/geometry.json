@@ -1,0 +1,22 @@
+{
+  "standard": "HE8-2to1-0.5in-v1",
+  "inches": 8,
+  "diamondInches": [
+    0.5,
+    0.25
+  ],
+  "previewPixels": 800,
+  "printPixels": 2400,
+  "angleDegrees": 26.56505117707799,
+  "origin": [
+    0,
+    0
+  ],
+  "top": "up",
+  "layers": [
+    "grid-first",
+    "ink-detail",
+    "architecture"
+  ],
+  "groundPlaneOnly": true
+}
