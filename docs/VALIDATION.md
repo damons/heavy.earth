@@ -37,6 +37,13 @@ Checked the local game in the Codex browser:
 - Downloaded the actual browser-generated entrance atlas: all 324 embedded PNGs are 50 × 25 RGBA images with transparent corners. The first 24 crop canvases were also inspected in the UI.
 - The generator uses the grid before adding artwork. No AI-painted floor grid is treated as calibrated geometry.
 
+## Ink-and-stone artwork refinement
+
+- Added procedural pen-and-ink masonry, carved niches, layered fixtures, floor cracks and masked scratchboard earth details to all four calibrated panels.
+- Compared the full draft against the previous version with only image payloads removed: all panel coordinates, classifications and navigation markers are unchanged. Cell sidecars, geometry specification and master grid are byte-for-byte unchanged.
+- All 15 JavaScript tests pass against the styled SVGs. All four print PNGs are 2400 × 2400 and strictly grayscale.
+- Imported the refreshed draft in the browser and re-exported the Entrance Hall atlas; all 324 PNG cuts remain 50 × 25 RGBA with transparent corners. Inspected the gallery with the exact overlay enabled.
+
 ## Limits
 
 These checks establish the new interface’s integration with the current engine; they do not establish complete equivalence with the original DOS executable. The existing engine’s [fidelity notes](../vendor/dnd/docs/FIDELITY.md) still apply.

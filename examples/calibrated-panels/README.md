@@ -23,11 +23,13 @@ Use **Panel workshop → Import panel draft** in an empty workshop. Hide **Show 
 
 1. Use the master HE8 origin, angle, and physical scale to create the cell graph.
 2. Draw each floor polygon from `cellPolygon(x,y)`; do not estimate the grid from the picture.
-3. Add restrained vector ink details on those cells.
-4. Extrude architectural ground edges vertically, using the same projection for their horizontal axes.
+3. Add deterministic pen-and-ink textures on those cells: fine cracks, stippling, and chipped stone contours.
+4. Extrude architectural ground edges vertically, using the same projection for their horizontal axes; add masonry courses, crosshatching, carved niches, and scratched highlights within those surfaces.
 5. Export the SVG, 2400 × 2400 PNG, 800 × 800 preview, and cell-coordinate sidecar.
 
 An 8-inch SVG has viewBox `0 0 800 800`. A diamond is exactly 50 × 25 preview units, or ½ × ¼ inch, with slopes ±1/2. All 94 master grid lines derive from the shared module. No generative image model controls this sample set's geometry.
+
+The ink-and-stone treatment preserves the original cell classifications, floor polygons, and level-navigation markers. Earth scratches are masked away from floor cells, and recessed masonry is clipped to the pit footprints. Ornament is procedural vector artwork, not scanned or hand-drawn art.
 
 SVG groups are `grid-first`, `ink-detail`, and `architecture`. The transparent full-panel grid is a separate file. Raised surfaces have a vertical screen offset; their ground anchors still follow the grid. The PNG is a flattened preview of these layers; the SVG retains the layers for later authoring tools.
 
