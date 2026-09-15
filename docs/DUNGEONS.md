@@ -4,7 +4,7 @@ Open **Panel workshop → Your dungeons**.
 
 1. Choose **New dungeon** and enter a **Dungeon name**. An empty dungeon is valid. Each dungeon has a separate identity, so names and panel IDs can be reused across dungeons.
 2. Use **Add scanned panel** in Panel view, or **Import panel draft** to add an existing panel set to the active dungeon. Imports preserve the existing panels; duplicate IDs or occupied slots within that dungeon are rejected. The current limits are 16 panels and 40 MB per dungeon, with 8 MB per uploaded scan.
-3. Set each panel’s **Dungeon level** and **Assembly X/Y**. Choose **Add connector**, click a passage endpoint on each panel, and select its destination. Same-level links become reciprocal. Mark stairs and pits separately and select their directed level destinations.
+3. Set each panel’s **Dungeon level** and **Assembly X/Y**. Choose **Add connector**, click a passage endpoint on each panel, and select its destination. Same-level links become reciprocal. Use **Panel features → Feature type → Add feature**, then click a diamond to place stairs or a pit. The **Feature list** lets you move features, change their types/destinations or remove them.
 4. Use **Level map** to check adjoining panels, **Level stack** to inspect floors, and **Play-test draft** to walk the reviewed cells and fixed routes.
 5. Choose another entry under **Saved dungeons**, then **Open dungeon**. The workshop saves pending edits before switching. A failed save or invalid incoming project leaves the current editor intact.
 

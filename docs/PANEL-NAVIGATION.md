@@ -10,7 +10,14 @@ Ordinary passage connectors remain reciprocal and must join two panels on the sa
 
 ## Marking level navigation
 
-Choose **Add level marker**, select a kind, and click the source cell. The square symbol and L-number identify the marker; the list below the canvas shows its kind, cell, and destination.
+In **Panel** view, use **Panel features** above the artwork:
+
+1. Choose a **Feature type**, click **Add feature**, then click its diamond on the panel. Placement returns to selection mode after adding one feature.
+2. Click **Select feature**, then its diamond, or choose **Select L1/L2/etc.** in the **Feature list**. The selected ground diamond is outlined. Repeated clicks cycle through features sharing a cell, such as up and down stairs.
+3. Use **Feature list** to jump to the controls below the artwork. Change the type or destination there. Click **Move L1/L2/etc.**, then its new diamond, to relocate it while retaining its identity and links.
+4. Click **Remove** on its feature row to delete it. Removing a destination clears incoming links; changing a type clears only links that no longer fit the new type. The status explains when links were cleared.
+
+Feature edits autosave with the active dungeon. These are navigation markers: adding or removing them does not repaint scanned art or change cell classifications. For example, removing a pit marker from a blocked cell leaves that cell blocked until you mark it walkable. A new stair needs a reviewed safe cell and an assigned destination to work in Play-test draft.
 
 | Kind | Symbol | Meaning |
 | --- | --- | --- |

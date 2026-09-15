@@ -273,6 +273,60 @@ export function validateDraft(d) {
     }
   return d;
 }
+// Feature edits retain stable IDs. Moving preserves links; changing type or
+// deleting a feature clears only destinations that can no longer be followed.
+export function editPanelFeature(panels, panelId, featureId, patch = null) {
+  const next = panels.map((p) => ({
+    ...p,
+    transitions: p.transitions.map((t) => ({ ...t })),
+  }));
+  const panel = next.find((p) => p.id === panelId),
+    feature = panel?.transitions.find((t) => t.id === featureId);
+  if (!feature) throw Error("Select a feature first.");
+  if (patch === null)
+    panel.transitions = panel.transitions.filter((t) => t.id !== featureId);
+  else {
+    for (const key of ["kind", "x", "y"])
+      if (Object.hasOwn(patch, key)) feature[key] = patch[key];
+    if (!Object.hasOwn(LEVEL_MARKERS, feature.kind))
+      throw Error("Choose a supported feature type.");
+    if (
+      panel.transitions.some(
+        (t) =>
+          t.id !== featureId &&
+          t.kind === feature.kind &&
+          t.x === feature.x &&
+          t.y === feature.y,
+      )
+    )
+      throw Error("This cell already has that feature type.");
+  }
+  const all = new Map(
+    next.flatMap((p) => p.transitions.map((t) => [t.id, { p, t }])),
+  );
+  let cleared = 0;
+  for (const p of next)
+    for (const t of p.transitions) {
+      const spec = LEVEL_MARKERS[t.kind];
+      if (t.destination && typeof t.destination === "object") {
+        const target = all.get(t.destination.marker);
+        if (!target || !canLinkLevelMarker(p, t, target.p, target.t)) {
+          t.destination = null;
+          cleared++;
+        }
+      } else if (t.destination === "engine" && !spec.route && !spec.engine) {
+        t.destination = null;
+        cleared++;
+      }
+    }
+  validateDraft({
+    format: "heavy-earth-panel-draft",
+    version: 3,
+    projection: DRAFT_PROJECTION,
+    panels: next,
+  });
+  return { panels: next, cleared };
+}
 function loadImage(src) {
   return new Promise((resolve, reject) => {
     const image = new Image();
@@ -295,6 +349,7 @@ export class PanelWorkshop {
     this.panels = [];
     this.images = new Map();
     this.selected = null;
+    this.selectedFeature = null;
     this.viewMode = "panel";
     this.overview = new PanelOverview({
       select: (id) => {
@@ -354,6 +409,18 @@ export class PanelWorkshop {
       o.textContent = spec.label;
       $("level-marker-kind").append(o);
     }
+    $("feature-add").onclick = () => {
+      $("panel-tool").value = "level-marker";
+      this.featureHint();
+    };
+    $("feature-select").onclick = () => {
+      $("panel-tool").value = "feature-select";
+      this.featureHint();
+    };
+    $("feature-list").onclick = () =>
+      $("panel-features-heading").scrollIntoView({ block: "start" });
+    $("panel-tool").onchange = () => this.featureHint();
+    $("level-marker-kind").onchange = () => this.featureHint();
     this.canvas.addEventListener("click", (e) => this.click(e));
     document.querySelectorAll(".file-button").forEach((label) =>
       label.addEventListener("keydown", (e) => {
@@ -408,6 +475,7 @@ export class PanelWorkshop {
     return { draft, images };
   }
   replaceDraft({ draft, images }) {
+    this.selectedFeature = null;
     this.panels = draft.panels;
     this.images = images;
     this.selected = this.panels[0]?.id ?? null;
@@ -519,6 +587,8 @@ export class PanelWorkshop {
     );
     $("panel-select").value = this.selected || "";
     if (!p) {
+      this.selectedFeature = null;
+      this.featureHint();
       $("panel-name").value = "";
       $("panel-connections").replaceChildren();
       $("panel-level-connections").replaceChildren();
@@ -680,6 +750,19 @@ export class PanelWorkshop {
       c.strokeText(label, q.x, q.y + 24);
       c.fillText(label, q.x, q.y + 24);
     });
+    const selected = p.transitions.find((t) => t.id === this.selectedFeature);
+    if (selected) {
+      const polygon = cellPolygon(selected.x, selected.y, p.pitch);
+      c.beginPath();
+      polygon.forEach((q, i) => (i ? c.lineTo(q.x, q.y) : c.moveTo(q.x, q.y)));
+      c.closePath();
+      c.strokeStyle = "#111";
+      c.lineWidth = 6;
+      c.stroke();
+      c.strokeStyle = "#fff";
+      c.lineWidth = 3;
+      c.stroke();
+    }
     c.strokeStyle = "#111";
     c.lineWidth = 3;
     line(
@@ -709,6 +792,26 @@ export class PanelWorkshop {
       y = Math.floor(q.y),
       tool = $("panel-tool").value;
     if (Math.abs(x) > 100 || Math.abs(y) > 100) return;
+    if (tool === "move-feature") {
+      this.changeFeature(this.selectedFeature, { x, y });
+      return;
+    }
+    if (tool === "feature-select") {
+      const hits = p.transitions.filter((t) => t.x === x && t.y === y);
+      this.selectedFeature = hits.length
+        ? hits[
+            (hits.findIndex((t) => t.id === this.selectedFeature) + 1) %
+              hits.length
+          ].id
+        : null;
+      this.levelConnections();
+      this.draw();
+      if (!hits.length)
+        this.featureHint(
+          `No feature at (${x}, ${y}). Choose Add feature to place one.`,
+        );
+      return;
+    }
     if (tool === "inspect") {
       const scratch = document.createElement("canvas");
       scratch.width = SIZE;
@@ -739,13 +842,16 @@ export class PanelWorkshop {
         return;
       }
       const spec = LEVEL_MARKERS[kind];
+      const id = crypto.randomUUID();
       p.transitions.push({
-        id: crypto.randomUUID(),
+        id,
         x,
         y,
         kind,
         destination: spec.route || spec.engine ? "engine" : null,
       });
+      this.selectedFeature = id;
+      $("panel-tool").value = "feature-select";
       this.levelConnections();
     } else if (tool === "connector") {
       if (p.connectors.some((v) => v.x === x && v.y === y)) {
@@ -933,9 +1039,60 @@ export class PanelWorkshop {
       this.notify(e.message);
     }
   }
+  featureHint(message) {
+    const p = this.panel,
+      selected = p?.transitions.find((t) => t.id === this.selectedFeature),
+      tool = $("panel-tool").value;
+    $("feature-add").disabled = !p;
+    $("feature-select").disabled = !p;
+    $("feature-list").disabled = !p;
+    $("feature-add").setAttribute(
+      "aria-pressed",
+      String(tool === "level-marker"),
+    );
+    $("feature-select").setAttribute(
+      "aria-pressed",
+      String(tool === "feature-select"),
+    );
+    $("feature-status").textContent =
+      message ??
+      (!p
+        ? "Add or open a panel to place features."
+        : tool === "level-marker"
+          ? `Click a diamond to add ${LEVEL_MARKERS[$("level-marker-kind").value].label.toLowerCase()}. Set its destination in the feature list.`
+          : tool === "move-feature"
+            ? selected
+              ? `Click the new diamond for ${LEVEL_MARKERS[selected.kind].label.toLowerCase()} L${p.transitions.indexOf(selected) + 1}.`
+              : "Select a feature from the list before moving it."
+            : selected
+              ? `Selected L${p.transitions.indexOf(selected) + 1}: ${LEVEL_MARKERS[selected.kind].label} at (${selected.x}, ${selected.y}). Edit or remove it in the feature list.`
+              : "Select a feature on the grid or choose Add feature. Features mark navigation; edit the cell tags separately.");
+  }
+  changeFeature(id, patch) {
+    try {
+      const result = editPanelFeature(this.panels, this.panel.id, id, patch);
+      this.panels = result.panels;
+      this.selectedFeature = patch === null ? null : id;
+      $("panel-tool").value = "feature-select";
+      this.dirty = true;
+      this.levelConnections();
+      this.draw();
+      const message = patch === null ? "Feature removed." : "Feature updated.";
+      this.featureHint(
+        `${message}${result.cleared ? ` ${result.cleared} incompatible destination link${result.cleared === 1 ? "" : "s"} cleared; assign new destinations in the feature list.` : ""} Cell tags and artwork are unchanged.`,
+      );
+    } catch (e) {
+      this.levelConnections();
+      this.featureHint(e.message);
+      this.notify(e.message);
+    }
+  }
   levelConnections() {
     const p = this.panel;
     if (!p) return;
+    if (!p.transitions.some((t) => t.id === this.selectedFeature))
+      this.selectedFeature = null;
+    this.featureHint();
     const all = this.panels.flatMap((panel) =>
       panel.transitions.map((t, i) => ({ panel, t, index: i + 1 })),
     );
@@ -944,12 +1101,45 @@ export class PanelWorkshop {
         const spec = LEVEL_MARKERS[t.kind],
           row = document.createElement("div");
         row.className = "level-connector";
+        row.classList.toggle("selected-feature", t.id === this.selectedFeature);
+        const selectFeature = document.createElement("button");
+        selectFeature.textContent = `Select L${i + 1}`;
+        selectFeature.setAttribute(
+          "aria-pressed",
+          String(t.id === this.selectedFeature),
+        );
+        selectFeature.onclick = () => {
+          this.selectedFeature = t.id;
+          $("panel-tool").value = "feature-select";
+          this.levelConnections();
+          this.draw();
+        };
+        const move = document.createElement("button");
+        move.textContent = `Move L${i + 1}`;
+        move.onclick = () => {
+          this.selectedFeature = t.id;
+          $("panel-tool").value = "move-feature";
+          this.levelConnections();
+          this.draw();
+          $("feature-status").scrollIntoView({ block: "center" });
+        };
+        const type = document.createElement("select");
+        type.setAttribute("aria-label", `Feature L${i + 1} type`);
+        for (const [kind, spec] of Object.entries(LEVEL_MARKERS)) {
+          const o = document.createElement("option");
+          o.value = kind;
+          o.textContent = spec.label;
+          type.append(o);
+        }
+        type.value = t.kind;
+        type.onchange = () => this.changeFeature(t.id, { kind: type.value });
+
         const heading = document.createElement("strong");
         heading.textContent = `L${i + 1} · ${spec.symbol} ${spec.label} · (${t.x}, ${t.y})`;
         const hint = document.createElement("p");
         hint.className = "muted";
         hint.textContent = spec.hint;
-        row.append(heading, hint);
+        row.append(heading, hint, selectFeature, move, type);
         if (spec.route || spec.engine) {
           const label = document.createElement("label");
           label.textContent = "Destination";
@@ -1002,22 +1192,14 @@ export class PanelWorkshop {
         const remove = document.createElement("button");
         remove.textContent = "Remove";
         remove.setAttribute("aria-label", `Remove level marker ${i + 1}`);
-        remove.onclick = () => {
-          for (const panel of this.panels)
-            for (const other of panel.transitions)
-              if (other.destination?.marker === t.id) other.destination = null;
-          p.transitions = p.transitions.filter((v) => v.id !== t.id);
-          this.dirty = true;
-          this.levelConnections();
-          this.draw();
-        };
+        remove.onclick = () => this.changeFeature(t.id, null);
         row.append(remove);
         return row;
       }),
     );
     if (!p.transitions.length)
       $("panel-level-connections").textContent =
-        "Choose Add level marker, select its kind, then click its cell in the artwork.";
+        "No features on this panel. Choose a feature type above the artwork, click Add feature, then click a diamond.";
   }
   export() {
     if (!this.panels.length) {

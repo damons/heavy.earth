@@ -55,7 +55,7 @@ The **Panel workshop** tab is the beginning of the hand-drawn map pipeline:
 3. Draw from the shared HE8 template: **½ × ¼ inch diamonds, exact 2:1 slope, top-left origin**. Crop the scan to the board edges and compare it to the fixed overlay.
 4. Preview a black/white threshold and inspect sampled pixels.
 5. Mark reviewed cells as walkable or blocked.
-6. Add passage endpoints between panels on the same level. Assign dungeon levels and mark stairs, pits, landings, local steps, elevators, and magical transport separately.
+6. Add passage endpoints between panels on the same level. Assign dungeon levels and use **Panel features** to add stairs, pits, landings, local steps, elevators, and magical transport. Select, move, change type/destination, or remove them in **Feature list**.
 7. Record each panel’s assembly coordinates. Changes autosave to the active dungeon; choose a saved dungeon and **Open dungeon** to switch. Mark walls, objects, and items, then export exact diamond cuts using **Export marked cell artwork**.
 
 Try [the synthetic two-panel draft](examples/two-panel-draft.json) using **Import panel draft**, or the [synthetic scan](game/tests/fixtures/panel-scan.png) using **Add scanned panel**. These are calibration fixtures, not hand-drawn art or playable dungeon maps.

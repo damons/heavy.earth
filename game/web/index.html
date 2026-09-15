@@ -445,12 +445,12 @@
                 <option value="object">Mark object</option>
                 <option value="item">Mark item</option>
                 <option value="connector">Add connector</option>
-                <option value="level-marker">Add level marker</option>
+                <option value="level-marker">Add feature</option>
+                <option value="feature-select">Select feature</option>
+                <option value="move-feature">Move selected feature</option>
                 <option value="erase">Erase cell annotation</option>
               </select></label
-            ><label
-              >Level marker kind<select id="level-marker-kind"></select
-            ></label>
+            >
             <button id="export-panels" class="primary full">
               Export panel draft ↓</button
             ><label class="file-button secondary" role="button" tabindex="0"
@@ -471,6 +471,29 @@
             <p id="panel-feedback" role="status" class="muted"></p>
           </aside>
           <section>
+            <section class="feature-toolbar" aria-label="Panel feature tools">
+              <h3>Panel features</h3>
+              <div class="feature-actions">
+                <label
+                  >Feature type<select id="level-marker-kind"></select
+                ></label>
+                <button id="feature-add" aria-pressed="false">
+                  Add feature
+                </button>
+                <button id="feature-select" aria-pressed="false">
+                  Select feature
+                </button>
+                <button id="feature-list">Feature list</button>
+              </div>
+              <p id="feature-status" role="status">
+                Add or open a panel to place features.
+              </p>
+              <p class="muted">
+                These markers define stairs, pits, landings and transport. The
+                scanned drawing stays intact; mark walkable or blocked cells
+                separately.
+              </p>
+            </section>
             <div class="panel-view-options">
               <label class="check"
                 ><input type="checkbox" id="show-panel-grid" checked /> Show
@@ -509,7 +532,9 @@
             </div>
             <div id="panel-connections"></div>
             <div class="connection-heading">
-              <h3>Level navigation and local steps</h3>
+              <h3 id="panel-features-heading">
+                Feature list · stairs, pits and transport
+              </h3>
               <p class="muted">
                 Mark stairs, pits, arrival points, or magical transport. Fixed
                 links are one-way; add a return stair separately. Put up and

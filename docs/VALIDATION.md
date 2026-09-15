@@ -7,7 +7,7 @@
 - `cargo clippy --workspace --all-targets -- -D warnings`: passed.
 - `cargo fmt --all --check`: passed.
 - `cargo build --release --locked`: passed on macOS with Rust 1.95.
-- `npm test`: **32 passing tests** — 6,400 projection/inverse tile-picking checks, 625 arbitrary board positions, panel permutations, exact SVG seam crossings on all four edges, fixed-standard/legacy rejection, reciprocal links, malformed drafts, and the HE8 example project.
+- `npm test`: **37 passing tests** — 6,400 projection/inverse tile-picking checks, 625 arbitrary board positions, panel permutations, exact SVG seam crossings on all four edges, fixed-standard/legacy rejection, reciprocal links, malformed drafts, and the HE8 example project.
 - Half-inch grid update: 0.5 × 0.25 inch diamonds; 16 horizontal and 32 vertical repeats per board. SVG checks cover all 94 lines, with 62 interior endpoints on each vertical edge and 30 on each horizontal edge. Coarse 1-inch drafts are explicitly rejected.
 - Grid-first samples: every SVG floor polygon and sidecar polygon matches `cellPolygon`; 2,860 crop positions verify exact size, center, area and slopes. Version-3 tests cover nonmutating v2 upgrade, per-level slots, directed stair/pit links, invalid targets, transport modes and same-level passage constraints.
 - PDF checks: two US Letter pages; the tracing square is exactly 576 × 576 points (8 × 8 inches); both pages rendered and visually inspected. The PDF/SVG and fixture generator reads the shared grid module.
@@ -73,6 +73,13 @@ Checked the local game in the Codex browser:
 - 32 JavaScript tests cover draft geometry and traversal plus autosave edits during an in-flight write, failed/stale saves, copy recovery and save-before-switch ordering.
 - Rust storage tests cover independent projects, restart, revisions, invalid paths/envelopes and preservation of unreadable files. HTTP smoke saves/reopens a six-panel stack, creates an empty dungeon, checks conflicts and same-origin enforcement, restarts the server, and verifies that workshop operations leave adventure state unchanged.
 - Browser checked: create and name two dungeons, import six stacked panels, add two scanned panels to the other dungeon, link reciprocal passages, save/reload and restore those links, switch back, and traverse the saved stairs. Importing a portable dungeon creates a third independent project with identical panel data, preserving both existing dungeons. The main server update preserved adventure state and all character-save hashes.
+
+## Panel feature editing
+
+- Added a visible feature toolbar with placement and selection modes, an outlined selected diamond, a feature-list shortcut, type editing, relocation and removal. Edits autosave with the dungeon.
+- All 37 JavaScript tests pass. Feature tests verify stable IDs and links when moving, selective cleanup on type changes, incoming pit cleanup when deleting a landing, rejection of invalid/duplicate edits, and unchanged artwork/cell tags.
+- Browser checked: add a pit, select it, change its type, move an existing linked stair to a different diamond, remove the added feature, delete a landing and save. The saved JSON confirms the moved coordinates, preserved stair link, cleared incoming pit, and byte-identical artwork and cell annotations.
+- Release/debug builds, HTTP smoke and the frozen-engine hash check pass.
 
 ## Limits
 
