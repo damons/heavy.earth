@@ -4,7 +4,7 @@
 
 Turn the existing DOS DND recreation into a graphical, monochrome isometric dungeon crawler. Keep its current gameplay and rules while making room for a world built from the artist’s physical dungeon drawings.
 
-The intended source medium is pen and ink / scratch art on Ampersand Claybord panels, restricted to **8 × 8 inches**, with a marked TOP kept up on every panel. Each panel depicts part of a level, not an entire level. All panels share the fixed HE8 2:1 grid, 1 × ½ inch diamonds, and a top-left corner origin. Every panel can occupy any mosaic slot; grid seams match on all four sides. Assemble a level from panels and join them at explicitly identified tunnels, doorways, stairs, and other passages. White represents potential navigable space; black represents solid earth or off-limits regions.
+The intended source medium is pen and ink / scratch art on Ampersand Claybord panels, restricted to **8 × 8 inches**, with a marked TOP kept up on every panel. Each panel depicts part of a level, not an entire level. All panels share the fixed HE8 2:1 grid, ½ × ¼ inch diamonds, and a top-left corner origin. Every panel can occupy any mosaic slot; grid seams match on all four sides. Assemble a level from panels and join them at explicitly identified tunnels, doorways, stairs, and other passages. White represents potential navigable space; black represents solid earth or off-limits regions.
 
 ## 1. Play the existing dungeons in isometric view — implemented
 
@@ -73,7 +73,7 @@ Acceptance example: enter a tunnel on panel A; emerge at its configured tunnel c
 
 ## Open art decisions
 
-- New art uses HE8: 8-inch boards, 1 × ½ inch diamonds, 2:1 projection, TOP up. These geometry decisions are settled.
+- New art uses HE8: 8-inch boards, ½ × ¼ inch diamonds, 2:1 projection, TOP up. These geometry decisions are settled.
 - How should older art using different geometry be registered or adapted while preserving the originals?
 - How should intentional overhangs, tunnels under other rooms, and elevation appear in navigation metadata?
 - What standard edge locations and widths should doors/tunnels use so separately drawn panels can connect as readily as their grids?

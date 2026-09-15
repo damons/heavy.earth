@@ -9,6 +9,10 @@ export function validateDraft(d) {
     throw Error(
       "Version 1 uses a different grid. Keep that draft; reauthor its artwork and annotations against the new 8-inch template before importing.",
     );
+  if (d?.projection?.standard === "HE8-2to1-1in-v1")
+    throw Error(
+      "This draft uses 1-inch diamonds. Keep that draft; reauthor its artwork and annotations against the new ½ × ¼ inch template before importing.",
+    );
   if (
     d?.format !== "heavy-earth-panel-draft" ||
     d.version !== 2 ||
@@ -51,7 +55,7 @@ export function validateDraft(d) {
       p.threshold > 255
     )
       throw Error(
-        "Invalid panel calibration. Use an 8-inch board, 100-pixel grid, origin 0/0, and TOP up.",
+        `Invalid panel calibration. Use an ${PANEL.inches}-inch board, ${PANEL.pitchPixels}-pixel grid, origin 0/0, and TOP up.`,
       );
     const position = p.assembly.join(",");
     if (positions.has(position))

@@ -2,15 +2,15 @@
 export const ISO = Object.freeze({
   slope: 1 / 2,
   angle: Math.atan(1 / 2),
-  pitch: 128,
+  pitch: 128, // Camera pixels per game tile; independent of physical print scale.
 });
 export const PANEL = Object.freeze({
-  standard: "HE8-2to1-1in-v1",
+  standard: "HE8-2to1-0.5in-v1",
   inches: 8,
   previewPixels: 800,
-  tileWidthInches: 1,
-  tileHeightInches: 1 / 2,
-  pitchPixels: 100,
+  tileWidthInches: 1 / 2,
+  tileHeightInches: 1 / 4,
+  pitchPixels: 50,
   origin: Object.freeze([0, 0]),
   top: "up",
 });
@@ -41,7 +41,14 @@ export function panelGridSegments() {
   const size = PANEL.inches,
     lines = [];
   for (const slope of [ISO.slope, -ISO.slope]) {
-    for (let n = -32; n <= 32; n++) {
+    // y = slope*x + intercept: bound intercepts by all four corners.
+    const first = Math.ceil(
+      Math.min(0, -slope * size) / PANEL.tileHeightInches,
+    );
+    const last = Math.floor(
+      Math.max(size, size - slope * size) / PANEL.tileHeightInches,
+    );
+    for (let n = first; n <= last; n++) {
       const intercept = n * PANEL.tileHeightInches;
       const points = [
         [0, intercept],

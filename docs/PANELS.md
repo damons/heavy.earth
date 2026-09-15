@@ -10,29 +10,29 @@
 | Projection | 2:1 dimetric, commonly called isometric-style |
 | Grid-line slopes | Exactly +1/2 and −1/2 |
 | Angles to horizontal | ±atan(1/2), approximately ±26.565051° |
-| Full diamond diagonals | 1 inch horizontal × 1/2 inch vertical |
+| Full diamond diagonals | 1/2 inch horizontal × 1/4 inch vertical |
 | Origin | Grid intersection at the top-left physical corner |
 | Orientation | TOP up; no 90° rotations or reflections |
 | Normalized scan preview | 800 × 800 pixels |
-| Preview diamond | 100 × 50 pixels; origin [0, 0] |
-| Standard ID | `HE8-2to1-1in-v1` |
+| Preview diamond | 50 × 25 pixels; origin [0, 0] |
+| Standard ID | `HE8-2to1-0.5in-v1` |
 
-The game renderer, workshop and printable assets use the same exact slope. The decimal angle is for explanation only; code uses division by 2 and 4 to avoid rounding drift.
+The game renderer, workshop and printable assets use the same exact slope. Game camera zoom is independent of physical diamond size. An 8-inch board spans 16 horizontal grid repeats and 32 vertical repeats. The decimal angle is for explanation only; code uses division by 2 and 4 to avoid rounding drift.
 
 ## Why arbitrary neighbors match
 
 In inches, world-grid coordinates `(u, v)` project to:
 
 ```text
-X = (u − v) / 2
-Y = (u + v) / 4
+X = (u − v) / 4
+Y = (u + v) / 8
 ```
 
-Moving one physical board to the right adds 8 inches to X. That is exactly the integer world-grid translation `(u + 8, v − 8)`.
+Moving one physical board to the right adds 8 inches to X. That is exactly the integer world-grid translation `(u + 16, v − 16)`.
 
-Moving one physical board down adds 8 inches to Y. That is exactly `(u + 16, v + 16)`.
+Moving one physical board down adds 8 inches to Y. That is exactly `(u + 32, v + 32)`.
 
-Both moves take every grid line and vertex onto the same repeating grid. Their inverses cover left and up, and combining them covers any row/column in the mosaic. No alternating templates or position-specific offsets are needed. Horizontal edge intersections repeat every 1 inch; vertical edge intersections repeat every 1/2 inch.
+Both moves take every grid line and vertex onto the same repeating grid. Their inverses cover left and up, and combining them covers any row/column in the mosaic. No alternating templates or position-specific offsets are needed. Horizontal edge intersections repeat every 1/2 inch; vertical edge intersections repeat every 1/4 inch.
 
 This is why restricting to 8-inch boards helps assembly but **does not, by itself, fix the former 30° projection**. A repeating true-30° lattice has an irrational √3 ratio between its horizontal and vertical periods; an identical square template cannot repeat exactly in both directions. HE8 deliberately uses the rational 2:1 projection instead.
 
@@ -68,16 +68,16 @@ The prototype exports 800-pixel grayscale PNG previews. Keep original scans for 
   "format": "heavy-earth-panel-draft",
   "version": 2,
   "projection": {
-    "standard": "HE8-2to1-1in-v1",
+    "standard": "HE8-2to1-0.5in-v1",
     "ratio": "2:1",
     "previewPixels": 800,
-    "tileWidthInches": 1
+    "tileWidthInches": 0.5
   },
   "panels": [{
     "id": "stable-panel-id",
     "name": "North passage",
     "inches": 8,
-    "pitch": 100,
+    "pitch": 50,
     "origin": [0, 0],
     "top": "up",
     "assembly": [0, 0],
@@ -100,11 +100,11 @@ A connector’s `target` identifies another panel’s connector, whose `target` 
 
 ### Earlier drafts
 
-Version 1 used 30° axes, adjustable origins/scale, and 8- or 10-inch boards. It is rejected with an explicit explanation. No automatic migration is attempted: changing only metadata would reinterpret existing artwork and cell annotations incorrectly. Keep that original draft and reauthor/register its art and annotations against HE8 separately. Existing **game saves** are unaffected by the projection change.
+Version 1 used 30° axes, adjustable origins/scale, and 8- or 10-inch boards. It is rejected with an explicit explanation, as are earlier version-2 drafts using `HE8-2to1-1in-v1` (1-inch diamonds). The finer grid retains draft schema version 2 with a distinct standard ID. No automatic migration is attempted: changing only metadata would reinterpret existing artwork and cell annotations incorrectly. Keep that original draft and reauthor/register its art and annotations against HE8 separately. Existing **game saves** are unaffected by the projection change.
 
 ## Verification and regeneration
 
-`npm test` verifies integer world translations across 625 assembly positions, multiple panel permutations, rejection of incompatible drafts, and the actual SVG’s line slopes and intersections on all four edges. It checks 30 interior line endpoints on each vertical side and 14 on each horizontal side, including their slope directions.
+`npm test` verifies integer world translations across 625 assembly positions, multiple panel permutations, rejection of incompatible drafts, and the actual SVG’s line slopes and intersections on all four edges. It checks 62 interior line endpoints on each vertical side and 30 on each horizontal side, including their slope directions.
 
 The single geometry source is `game/web/grid.js`. Run `python3 scripts/generate_panel_assets.py` with Node and ReportLab installed to regenerate the PDF, SVG and synthetic example fixtures. The generator reads this shared module directly.
 

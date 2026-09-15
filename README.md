@@ -52,7 +52,7 @@ The **Panel workshop** tab is the beginning of the hand-drawn map pipeline:
 
 1. Add a square PNG, JPEG, or WebP scan, up to 8 MB.
 2. Use an **8 × 8 inch** board with its marked **TOP up**.
-3. Draw from the shared HE8 template: **1 × ½ inch diamonds, exact 2:1 slope, top-left origin**. Crop the scan to the board edges and compare it to the fixed overlay.
+3. Draw from the shared HE8 template: **½ × ¼ inch diamonds, exact 2:1 slope, top-left origin**. Crop the scan to the board edges and compare it to the fixed overlay.
 4. Preview a black/white threshold and inspect sampled pixels.
 5. Mark reviewed cells as walkable or blocked.
 6. Add passage endpoints, choose their directions, and link them between panels. Links are reciprocal.
@@ -62,7 +62,7 @@ Try [the synthetic two-panel draft](examples/two-panel-draft.json) using **Impor
 
 The workshop works locally in the browser and sends no artwork to the Rust server. It exports 800 × 800 grayscale preview images inside the draft. **Keep original high-resolution scans separately.** Drafts are not autosaved; export before closing. Imports merge into the current workshop and reject duplicate IDs.
 
-**Custom panels are not playable yet.** Thresholding is a preview, not an automatic navigation classifier. Grid lines, hatching, shadows, and furniture must be distinguished from solid earth before maps enter gameplay. Every conforming HE8 panel’s grid matches any other panel on all four sides. Actual scan alignment still needs review. Earlier version-1 drafts are rejected rather than silently reinterpreted.
+**Custom panels are not playable yet.** Thresholding is a preview, not an automatic navigation classifier. Grid lines, hatching, shadows, and furniture must be distinguished from solid earth before maps enter gameplay. Every conforming HE8 panel’s grid matches any other panel on all four sides. Actual scan alignment still needs review. Earlier version-1 drafts and drafts using 1-inch diamonds are rejected rather than silently reinterpreted.
 
 Print the [measured 8-inch template](output/pdf/heavy-earth-8x8-template.pdf) at Actual Size / 100%, or use the [8-inch SVG](game/web/panel-grid.svg). Its second PDF page demonstrates horizontal and vertical seams. Mark TOP on each board.
 

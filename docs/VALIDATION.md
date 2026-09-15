@@ -8,6 +8,7 @@
 - `cargo fmt --all --check`: passed.
 - `cargo build --release --locked`: passed on macOS with Rust 1.95.
 - `npm test`: **7 passing tests** — 6,400 projection/inverse tile-picking checks, 625 arbitrary board positions, panel permutations, exact SVG seam crossings on all four edges, fixed-standard/legacy rejection, reciprocal links, malformed drafts, and the HE8 example project.
+- Half-inch grid update: 0.5 × 0.25 inch diamonds; 16 horizontal and 32 vertical repeats per board. SVG checks cover all 94 lines, with 62 interior endpoints on each vertical edge and 30 on each horizontal edge. Coarse 1-inch drafts are explicitly rejected.
 - PDF checks: two US Letter pages; the tracing square is exactly 576 × 576 points (8 × 8 inches); both pages rendered and visually inspected. The PDF/SVG and fixture generator reads the shared grid module.
 - `python3 scripts/verify_engine.py`: all **56 files** match the pinned DND snapshot.
 - `python3 scripts/smoke_http.py`: passed against a real server using disposable saves. Covers embedded assets, character creation, actions, stale commands, Host/Origin validation, invalid levels/save IDs, explored maps, and save/resume after server restart.
@@ -23,6 +24,7 @@ Checked the local game in the Codex browser:
 - Desktop layout and 390-pixel compact layout, including camera scaling.
 - Scan upload with a synthetic square fixture, grid preview, walkable annotation, connector creation, adding a second panel, reciprocal link selection, threshold preview, draft export, and import into a fresh workshop.
 - HE8 follow-up: fixed geometry controls, marked TOP, v2 example import with reciprocal links, and its scan/grid overlay were verified in the browser without errors.
+- The half-inch workshop label and updated two-panel example import were verified in the browser, including the reciprocal passage at cell (18, 12).
 - The running adventure was restored after the build update; its save file remained byte-for-byte unchanged.
 - No browser warnings/errors were reported during the gameplay checks.
 

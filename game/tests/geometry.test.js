@@ -11,7 +11,7 @@ import {
 import { validateDraft } from "../web/panels.js";
 
 test("projection and tile picking round trip at the exact 2:1 scale", () => {
-  for (const pitch of [16, 100, 128, 400])
+  for (const pitch of [16, 50, 128, 400])
     for (let x = -20; x < 20; x++)
       for (let y = -20; y < 20; y++) {
         const a = project(x + 0.5, y + 0.5, pitch),
@@ -29,7 +29,7 @@ const panel = (id, assembly = [0, 0]) => ({
   id,
   name: id,
   inches: 8,
-  pitch: 100,
+  pitch: 50,
   origin: [0, 0],
   top: "up",
   assembly,
@@ -59,6 +59,7 @@ test("nonstandard dimensions, offsets, rotation, scale and legacy drafts are rej
   for (const change of [
     { inches: 10 },
     { pitch: 80 },
+    { pitch: 100 },
     { origin: [50, 0] },
     { origin: [0, 25] },
     { origin: [null, 0] },
@@ -71,7 +72,10 @@ test("nonstandard dimensions, offsets, rotation, scale and legacy drafts are rej
   d.version = 1;
   assert.throws(() => validateDraft(d), /Version 1.*reauthor/);
   d.version = 2;
-  d.projection.ratio = "sqrt3:1";
+  d.projection.standard = "HE8-2to1-1in-v1";
+  d.projection.tileWidthInches = 1;
+  assert.throws(() => validateDraft(d), /1-inch diamonds.*reauthor/);
+  d.projection = { ...DRAFT_PROJECTION, ratio: "sqrt3:1" };
   assert.throws(() => validateDraft(d), /Unsupported/);
   assert.throws(
     () => validateDraft(draft([panel("a"), panel("b")])),
@@ -100,14 +104,14 @@ test("arbitrary board placements preserve integer grid coordinates and exact sea
         [16, 0],
         [24, 8],
       ]) {
-        const local = project(u, v, 1),
-          global = project(u + offset.x, v + offset.y, 1);
+        const local = project(u, v, PANEL.tileWidthInches),
+          global = project(u + offset.x, v + offset.y, PANEL.tileWidthInches);
         assert.equal(global.x, local.x + column * 8);
         assert.equal(global.y, local.y + row * 8);
       }
     }
-  assert.deepEqual(panelWorldOffset(1, 0), { x: 8, y: -8 });
-  assert.deepEqual(panelWorldOffset(0, 1), { x: 16, y: 16 });
+  assert.deepEqual(panelWorldOffset(1, 0), { x: 16, y: -16 });
+  assert.deepEqual(panelWorldOffset(0, 1), { x: 32, y: 32 });
   for (let shift = 0; shift < 16; shift++) {
     const panels = Array.from({ length: 16 }, (_, i) =>
       panel(`art-${(i + shift) % 16}`, [i % 4, Math.floor(i / 4)]),
@@ -126,7 +130,7 @@ test("actual printable SVG meets the exact physical dimensions and matches all f
       /<line x1="([^"]+)" y1="([^"]+)" x2="([^"]+)" y2="([^"]+)"/g,
     ),
   ].map((m) => m.slice(1).map(Number));
-  assert.ok(lines.length > 40);
+  assert.equal(lines.length, 94);
   function edge(axis, value) {
     const crossings = [];
     for (const [x1, y1, x2, y2] of lines) {
@@ -145,16 +149,16 @@ test("actual printable SVG meets the exact physical dimensions and matches all f
   assert.deepEqual(edge(1, 8), edge(1, 0)); // Any bottom edge meets any top edge.
   assert.deepEqual(
     edge(0, 0),
-    Array.from({ length: 15 }, (_, i) => [
-      [(i + 1) / 2, -0.5],
-      [(i + 1) / 2, 0.5],
+    Array.from({ length: 31 }, (_, i) => [
+      [(i + 1) / 4, -0.5],
+      [(i + 1) / 4, 0.5],
     ]).flat(),
   );
   assert.deepEqual(
     edge(1, 0),
-    Array.from({ length: 7 }, (_, i) => [
-      [i + 1, -0.5],
-      [i + 1, 0.5],
+    Array.from({ length: 15 }, (_, i) => [
+      [(i + 1) / 2, -0.5],
+      [(i + 1) / 2, 0.5],
     ]).flat(),
   );
 });
