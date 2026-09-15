@@ -29,4 +29,4 @@ These checks establish the new interface’s integration with the current engine
 
 The workshop was tested with synthetic fixtures. No production Claybord scan has been calibrated or classified. It exports reviewed draft metadata and preview images, not playable custom levels. Ink classification, edge-level navigation, physical panel assembly, cross-panel gameplay, production sprite artwork, and full-resolution asset handling remain on the roadmap.
 
-Windows and Linux graphical play have not been manually checked. The launcher is a macOS `.command`; CLI startup works wherever the Rust dependencies compile and a browser can reach the loopback server. CI is configured for Linux but its remote result must be checked after publication.
+Windows and Linux graphical play have not been manually checked. The launcher is a macOS `.command`; CLI startup works wherever the Rust dependencies compile and a browser can reach the loopback server. CI uses Linux and pins Rust 1.95.0 to match local validation. The initial run with Rust 1.98 passed all Rust tests but introduced a new Clippy style lint in the frozen engine; the engine was kept unchanged.

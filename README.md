@@ -97,6 +97,8 @@ npm test  # optional development check; Node 22+, no npm install required
 
 The workspace runs 54 original tests and 5 adapter tests. Node checks projection/picking and panel draft integrity. HTTP smoke tests use disposable saves, including a full server restart. [Validation notes](docs/VALIDATION.md) record browser checks and limits.
 
+CI pins Rust 1.95.0, the engine snapshot’s tested toolchain, so new Clippy lints do not force edits to the frozen source.
+
 Cargo reports an ignored profile in the vendored manifest: the workspace applies the same release profile, and the original file is retained byte-for-byte for provenance.
 
 ## Origins and attribution
