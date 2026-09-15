@@ -1,0 +1,8 @@
+[workspace]
+members = ["game", "vendor/dnd"]
+default-members = ["game"]
+resolver = "3"
+
+[profile.release]
+lto = true
+strip = true

@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <title>HEAVY.EARTH — Into the underworld</title>
+    <link rel="icon" href="/brand.png" />
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <header class="masthead">
+      <a
+        href="#"
+        id="home"
+        class="wordmark"
+        aria-label="Heavy Earth title screen"
+        ><img src="/brand.png" alt="" />HEAVY<span>.</span>EARTH</a
+      ><span class="edition">A DUNGEON IN INK & STONE</span>
+      <nav>
+        <button id="play-tab" class="nav active">Adventure</button
+        ><button id="panels-tab" class="nav">
+          Panel workshop <small>LAB</small></button
+        ><button id="help" class="nav">Field guide</button>
+      </nav>
+    </header>
+    <main id="title-screen" class="title-screen">
+      <section class="intro">
+        <div class="eyebrow">THE EARTH KEEPS ITS SECRETS.</div>
+        <h1>Descend.<br />Discover.<br /><em>Return alive.</em></h1>
+        <p>
+          The old dungeons, seen from a new angle.<br />A turn-based expedition
+          into a world of black ink,<br />white stone, and things best left
+          undisturbed.
+        </p>
+        <div class="intro-rule"></div>
+        <div class="eyebrow">FIVE DUNGEONS · ONE HUNDRED LEVELS · ONE ORB</div>
+        <img
+          class="title-mark"
+          src="/brand.png"
+          alt="Original isometric Heavy Earth lettering"
+        />
+      </section>
+      <section class="character-card">
+        <div class="eyebrow">YOUR NEXT EXPEDITION</div>
+        <h2>A name for the depths.</h2>
+        <form id="create-form">
+          <label
+            >Adventurer<input
+              id="name"
+              name="name"
+              maxlength="64"
+              value="Explorer"
+              required
+              autocomplete="off"
+          /></label>
+          <div class="form-row">
+            <label
+              >Calling<select id="class">
+                <option value="fighter">Fighter</option>
+                <option value="cleric">Cleric</option>
+                <option value="magician">Magician</option>
+              </select></label
+            ><label
+              >Dungeon<select id="dungeon">
+                <option value="telengard">Telengard</option>
+                <option value="shvenk">Shvenk’s Lair</option>
+                <option value="lamorte">Lamorte</option>
+                <option value="warren">The Warren</option>
+                <option value="cavern">The Cavern</option>
+              </select></label
+            >
+          </div>
+          <p id="class-note" class="muted">
+            Steel and endurance. Fighters need a wand to cast spells.
+          </p>
+          <button class="primary full" type="submit">
+            Roll a character <span>↗</span>
+          </button>
+        </form>
+        <div id="roll-result" hidden>
+          <div id="roll-stats" class="stats"></div>
+          <p class="muted" id="roll-hp"></p>
+          <div class="form-row">
+            <button id="reroll">Roll again</button
+            ><button id="begin" class="primary">Accept & begin ↗</button>
+          </div>
+        </div>
+        <div class="saved-heading">
+          <span class="eyebrow">SAVED EXPEDITIONS</span
+          ><button id="refresh-saves" class="text-button">Refresh</button>
+        </div>
+        <div id="saves" class="save-list"></div>
+      </section>
+    </main>
+    <main id="game-screen" class="game-layout" hidden>
+      <aside class="character">
+        <div class="eyebrow">THE ADVENTURER</div>
+        <h2 id="player-name"></h2>
+        <p class="muted" id="player-subtitle"></p>
+        <div class="health-title">
+          <span>VITALITY</span><strong id="hp-label"></strong>
+        </div>
+        <div class="health-track"><div id="hp-bar"></div></div>
+        <div id="player-stats" class="stats"></div>
+        <div class="ledger">
+          <div><span>Experience</span><strong id="xp"></strong></div>
+          <div><span>Carried gold</span><strong id="gold"></strong></div>
+          <div><span>Banked gold</span><strong id="bank"></strong></div>
+        </div>
+        <div class="section-label">EQUIPMENT</div>
+        <div id="equipment" class="ledger"></div>
+        <div class="section-label">SPELL CHARGES</div>
+        <div id="charges" class="charges"></div>
+        <button id="spellbook" class="full">
+          Open spellbook <span>B</span>
+        </button>
+        <div id="effects" class="effects"></div>
+        <div class="character-bottom">
+          <span id="save-status">Every action is saved</span
+          ><button id="save-button" class="text-button">Save now</button
+          ><button id="return-title" class="text-button">Adventures ↗</button>
+        </div>
+      </aside>
+      <section class="dungeon-section">
+        <div class="map-heading">
+          <div>
+            <div class="eyebrow" id="location-caption">BENEATH THE SURFACE</div>
+            <h1 id="location"></h1>
+          </div>
+          <div class="map-modes">
+            <button id="live-mode" class="selected">Live view</button
+            ><button id="journal-mode">Explored map <small>M</small></button>
+          </div>
+        </div>
+        <div id="viewport" class="viewport">
+          <canvas
+            id="dungeon-canvas"
+            tabindex="0"
+            aria-label="Isometric dungeon. Use W north, A west, X south, D east to move. Click an adjacent visible tile to move."
+          ></canvas>
+          <div id="town-overlay" class="scene-overlay" hidden>
+            <span class="eyebrow">A MOMENT ABOVE GROUND</span>
+            <h2>The descent awaits.</h2>
+            <p>Rested. Recovered. Ready, perhaps.</p>
+            <button id="enter-dungeon" class="primary">
+              Enter the dungeon ↘
+            </button>
+          </div>
+          <div class="canvas-tools">
+            <button id="zoom-out" aria-label="Zoom out">−</button
+            ><button id="center-view" aria-label="Center view">Center</button
+            ><button id="zoom-in" aria-label="Zoom in">+</button>
+          </div>
+          <div
+            class="compass"
+            aria-label="North is upper right, east is lower right"
+          >
+            <span>W · N ↗</span><span>A · W ↖</span><span>D · E ↘</span
+            ><span>X · S ↙</span>
+          </div>
+          <div class="view-note" id="view-note"></div>
+          <label class="journal-level" id="journal-level-wrap" hidden
+            >Level
+            <select id="journal-level"></select
+          ></label>
+        </div>
+        <div class="map-footer">
+          <span id="coordinates"></span
+          ><span id="map-hint"
+            >Click an adjacent tile to move · Drag to pan · Scroll to zoom</span
+          ><span id="turns"></span>
+        </div>
+        <section class="encounter">
+          <div>
+            <div class="eyebrow" id="phase-label">EXPLORING</div>
+            <h2 id="encounter-title"></h2>
+            <p id="encounter-note" class="muted"></p>
+          </div>
+          <div id="actions" class="action-buttons"></div>
+        </section>
+        <form id="command-form" class="command-form">
+          <label for="command">COMMAND</label
+          ><input
+            id="command"
+            placeholder="Type a command…  e.g. cast 1 6"
+            autocomplete="off"
+            maxlength="256"
+          /><button type="submit" aria-label="Submit command">↵</button>
+        </form>
+      </section>
+      <aside class="journal">
+        <div class="journal-heading">
+          <div class="eyebrow">EXPEDITION JOURNAL</div>
+          <span>↓</span>
+        </div>
+        <ol id="log" aria-live="polite" aria-relevant="additions"></ol>
+        <div class="journal-foot">
+          Find the Orb of Zot.<br />Bring it back to the light.
+        </div>
+      </aside>
+    </main>
+    <main id="panel-screen" class="panel-screen" hidden>
+      <div class="panel-heading">
+        <div>
+          <div class="eyebrow">FROM YOUR HAND TO THE UNDERWORLD</div>
+          <h1>Panel workshop.</h1>
+          <p class="muted">
+            Align a scan with the shared isometric grid. Mark cells and
+            connecting passages.
+          </p>
+        </div>
+        <span class="badge">AUTHORING PROTOTYPE</span>
+      </div>
+      <div class="panel-layout">
+        <aside class="panel-controls">
+          <label class="file-button" role="button" tabindex="0"
+            >Add scanned panel<input
+              type="file"
+              id="panel-upload"
+              accept="image/png,image/jpeg,image/webp"
+          /></label>
+          <p class="muted">
+            Local PNG, JPEG, or WebP. Art stays in this browser. Drafts are
+            exported manually.
+          </p>
+          <label>Panel<select id="panel-select"></select></label
+          ><label
+            >Panel name<input
+              id="panel-name"
+              value="Untitled panel"
+              maxlength="64"
+          /></label>
+          <div class="form-row">
+            <label
+              >Physical size<select id="panel-inches">
+                <option value="8">8 × 8 in</option>
+                <option value="10">10 × 10 in</option>
+              </select></label
+            ><label
+              >Grid pitch (px)<input
+                id="panel-pitch"
+                type="number"
+                value="80"
+                min="16"
+                max="400"
+            /></label>
+          </div>
+          <div class="form-row">
+            <label
+              >Grid origin X<input
+                id="panel-origin-x"
+                type="number"
+                value="400" /></label
+            ><label
+              >Grid origin Y<input
+                id="panel-origin-y"
+                type="number"
+                value="100"
+            /></label>
+          </div>
+          <div class="form-row">
+            <label
+              >Assembly X<input
+                id="panel-grid-x"
+                type="number"
+                value="0" /></label
+            ><label
+              >Assembly Y<input id="panel-grid-y" type="number" value="0"
+            /></label>
+          </div>
+          <label
+            >Ink threshold <output id="threshold-value">150</output
+            ><input
+              id="panel-threshold"
+              type="range"
+              min="0"
+              max="255"
+              value="150" /></label
+          ><label class="check"
+            ><input type="checkbox" id="panel-mask" /> Preview black / white
+            mask</label
+          ><label
+            >Click tool<select id="panel-tool">
+              <option value="inspect">Inspect cell</option>
+              <option value="open">Mark walkable</option>
+              <option value="blocked">Mark blocked</option>
+              <option value="connector">Add connector</option>
+              <option value="erase">Erase cell annotation</option>
+            </select></label
+          ><button id="export-panels" class="primary full">
+            Export panel draft ↓</button
+          ><label class="file-button secondary" role="button" tabindex="0"
+            >Import panel draft<input
+              type="file"
+              id="import-panels"
+              accept="application/json,.json"
+          /></label>
+          <p id="panel-feedback" role="status" class="muted"></p>
+        </aside>
+        <section>
+          <div class="panel-canvas-wrap">
+            <canvas
+              id="panel-canvas"
+              aria-label="Scanned panel with isometric alignment grid"
+            ></canvas>
+            <div id="panel-empty">
+              <h2>Your ink. Your underworld.</h2>
+              <p>Add an 8 × 8 or 10 × 10 inch panel scan to begin.</p>
+            </div>
+          </div>
+          <div class="panel-foot">
+            <span>30° axes · equal grid scale across panels</span
+            ><span>Draft only · not loaded into gameplay</span>
+          </div>
+          <div class="connection-heading">
+            <h3>Passages between panels</h3>
+            <span class="muted"
+              >Mark a connector, then link it to another panel’s
+              connector.</span
+            >
+          </div>
+          <div id="panel-connections"></div>
+          <p class="muted panel-caveat">
+            Thresholding is a visual preview. White cells still need review:
+            grid lines, hatching, and drawn fixtures can look like walls. The
+            future importer will keep artwork, walkability, and room contents
+            separate.
+          </p>
+        </section>
+      </div>
+    </main>
+    <dialog id="book-dialog">
+      <div class="dialog-heading">
+        <h2 id="dialog-title"></h2>
+        <button id="close-dialog" aria-label="Close dialog">×</button>
+      </div>
+      <div id="dialog-content"></div>
+    </dialog>
+    <div id="toast" role="status" hidden></div>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
