@@ -1,24 +1,31 @@
-import { project, unproject } from "./renderer.js";
+import { project, unproject, PANEL, DRAFT_PROJECTION } from "./grid.js";
 const $ = (id) => document.getElementById(id);
-const SIZE = 800,
+const SIZE = PANEL.previewPixels,
   MAX_PANELS = 16;
 const num = (id, min, max) =>
   Math.max(min, Math.min(max, Number($(id).value) || 0));
 export function validateDraft(d) {
+  if (d?.version === 1)
+    throw Error(
+      "Version 1 uses a different grid. Keep that draft; reauthor its artwork and annotations against the new 8-inch template before importing.",
+    );
   if (
     d?.format !== "heavy-earth-panel-draft" ||
-    d.version !== 1 ||
-    d.projection?.angleDegrees !== 30 ||
-    d.projection?.previewPixels !== 800 ||
+    d.version !== 2 ||
+    d.projection?.standard !== PANEL.standard ||
+    d.projection?.ratio !== "2:1" ||
+    d.projection?.tileWidthInches !== PANEL.tileWidthInches ||
+    d.projection?.previewPixels !== SIZE ||
     !Array.isArray(d.panels) ||
     !d.panels.length ||
     d.panels.length > MAX_PANELS
   )
     throw Error(
-      "Unsupported panel draft. Expected version 1, 30° axes, and 1–16 panels.",
+      "Unsupported panel draft. Expected version 2, the fixed HE8 grid, and 1–16 panels.",
     );
   const ids = new Set(),
-    connectors = new Set();
+    connectors = new Set(),
+    positions = new Set();
   for (const p of d.panels) {
     if (
       typeof p.id !== "string" ||
@@ -30,13 +37,12 @@ export function validateDraft(d) {
       throw Error("Invalid or duplicate panel identity.");
     ids.add(p.id);
     if (
-      ![8, 10].includes(p.inches) ||
-      !Number.isFinite(p.pitch) ||
-      p.pitch < 16 ||
-      p.pitch > 400 ||
+      p.inches !== PANEL.inches ||
+      p.pitch !== PANEL.pitchPixels ||
+      p.top !== PANEL.top ||
       !Array.isArray(p.origin) ||
       p.origin.length !== 2 ||
-      p.origin.some((v) => !Number.isFinite(v) || Math.abs(v) > 1600) ||
+      p.origin.some((v, i) => v !== PANEL.origin[i]) ||
       !Array.isArray(p.assembly) ||
       p.assembly.length !== 2 ||
       p.assembly.some((v) => !Number.isInteger(v) || Math.abs(v) > 100) ||
@@ -44,7 +50,13 @@ export function validateDraft(d) {
       p.threshold < 0 ||
       p.threshold > 255
     )
-      throw Error("Invalid panel calibration.");
+      throw Error(
+        "Invalid panel calibration. Use an 8-inch board, 100-pixel grid, origin 0/0, and TOP up.",
+      );
+    const position = p.assembly.join(",");
+    if (positions.has(position))
+      throw Error("Two panels occupy the same assembly slot.");
+    positions.add(position);
     if (
       typeof p.art !== "string" ||
       !/^data:image\/(png|jpeg|webp);base64,[a-zA-Z0-9+/=]+$/.test(p.art) ||
@@ -136,21 +148,11 @@ export class PanelWorkshop {
     };
     for (const id of [
       "panel-name",
-      "panel-inches",
-      "panel-pitch",
-      "panel-origin-x",
-      "panel-origin-y",
       "panel-grid-x",
       "panel-grid-y",
       "panel-threshold",
     ])
-      $(id).addEventListener("input", () => {
-        if (id === "panel-inches" && this.panel)
-          $("panel-pitch").value =
-            (this.panel.pitch * this.panel.inches) /
-            Number($("panel-inches").value);
-        this.update();
-      });
+      $(id).addEventListener("input", () => this.update());
     $("panel-mask").onchange = () => {
       this.previewMask = $("panel-mask").checked;
       this.draw();
@@ -172,6 +174,14 @@ export class PanelWorkshop {
         e.returnValue = "";
       }
     });
+  }
+  nextSlot() {
+    let column = 0;
+    while (
+      this.panels.some((p) => p.assembly[0] === column && p.assembly[1] === 0)
+    )
+      column++;
+    return [column, 0];
   }
   get panel() {
     return this.panels.find((p) => p.id === this.selected);
@@ -204,10 +214,11 @@ export class PanelWorkshop {
       const p = {
         id,
         name: file.name.replace(/\.[^.]+$/, "").slice(0, 64),
-        inches: 8,
-        pitch: 80,
-        origin: [400, 100],
-        assembly: [this.panels.length, 0],
+        inches: PANEL.inches,
+        pitch: PANEL.pitchPixels,
+        origin: [...PANEL.origin],
+        top: PANEL.top,
+        assembly: this.nextSlot(),
         threshold: 150,
         art,
         cells: [],
@@ -220,7 +231,7 @@ export class PanelWorkshop {
       this.controls();
       this.draw();
       this.notify(
-        "Panel added. Align the grid origin and pitch with the scan.",
+        "Panel added. TOP stays up. Check that your edge-cropped scan follows the fixed grid overlay.",
       );
     } catch (e) {
       this.notify(e.message);
@@ -242,10 +253,6 @@ export class PanelWorkshop {
     if (!p) return;
     for (const [id, value] of Object.entries({
       "panel-name": p.name,
-      "panel-inches": p.inches,
-      "panel-pitch": p.pitch,
-      "panel-origin-x": p.origin[0],
-      "panel-origin-y": p.origin[1],
       "panel-grid-x": p.assembly[0],
       "panel-grid-y": p.assembly[1],
       "panel-threshold": p.threshold,
@@ -259,12 +266,6 @@ export class PanelWorkshop {
     if (!p) return;
     Object.assign(p, {
       name: $("panel-name").value.slice(0, 64) || "Untitled panel",
-      inches: Number($("panel-inches").value),
-      pitch: num("panel-pitch", 16, 400),
-      origin: [
-        num("panel-origin-x", -1600, 1600),
-        num("panel-origin-y", -1600, 1600),
-      ],
       assembly: [
         Math.round(num("panel-grid-x", -100, 100)),
         Math.round(num("panel-grid-y", -100, 100)),
@@ -358,9 +359,8 @@ export class PanelWorkshop {
       { x: p.origin[0], y: p.origin[1] - 10 },
       { x: p.origin[0], y: p.origin[1] + 10 },
     );
-    const pitch = (p.pitch / SIZE) * p.inches;
     $("panel-feedback").textContent =
-      `${p.cells.length} marked cells · ${p.connectors.length} connectors · ${pitch.toFixed(3)} in per tile diagonal`;
+      `${p.cells.length} marked cells · ${p.connectors.length} connectors · HE8 grid · TOP ↑`;
   }
   click(e) {
     const p = this.panel;
@@ -500,8 +500,8 @@ export class PanelWorkshop {
     }
     const draft = {
       format: "heavy-earth-panel-draft",
-      version: 1,
-      projection: { angleDegrees: 30, previewPixels: SIZE },
+      version: 2,
+      projection: DRAFT_PROJECTION,
       panels: this.panels,
     };
     try {
@@ -516,12 +516,8 @@ export class PanelWorkshop {
       a.click();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
       this.dirty = false;
-      const pitches = this.panels.map((p) => (p.pitch / SIZE) * p.inches),
-        consistent = Math.max(...pitches) - Math.min(...pitches) < 0.01;
       this.notify(
-        consistent
-          ? "Panel draft exported, including grayscale preview art. Keep your original high-resolution scans."
-          : "Draft exported. Grid scales differ between panels; calibrate to the same physical pitch before future gameplay import.",
+        "HE8 panel draft exported. Grid geometry is fixed; artwork alignment and passage connectivity still require review.",
       );
     } catch (e) {
       this.notify(e.message);

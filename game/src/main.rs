@@ -156,6 +156,24 @@ fn run() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
                 "text/javascript",
                 include_bytes!("../web/app.js").to_vec(),
             ),
+            "/grid.js" => send(
+                req,
+                200,
+                "text/javascript",
+                include_bytes!("../web/grid.js").to_vec(),
+            ),
+            "/panel-grid.svg" => send(
+                req,
+                200,
+                "image/svg+xml",
+                include_bytes!("../web/panel-grid.svg").to_vec(),
+            ),
+            "/panel-template.pdf" => send(
+                req,
+                200,
+                "application/pdf",
+                include_bytes!("../../output/pdf/heavy-earth-8x8-template.pdf").to_vec(),
+            ),
             "/renderer.js" => send(
                 req,
                 200,

@@ -206,8 +206,8 @@
           <div class="eyebrow">FROM YOUR HAND TO THE UNDERWORLD</div>
           <h1>Panel workshop.</h1>
           <p class="muted">
-            Align a scan with the shared isometric grid. Mark cells and
-            connecting passages.
+            Use the same 8-inch grid on every panel. Mark cells and connecting
+            passages.
           </p>
         </div>
         <span class="badge">AUTHORING PROTOTYPE</span>
@@ -231,33 +231,21 @@
               value="Untitled panel"
               maxlength="64"
           /></label>
-          <div class="form-row">
-            <label
-              >Physical size<select id="panel-inches">
-                <option value="8">8 × 8 in</option>
-                <option value="10">10 × 10 in</option>
-              </select></label
-            ><label
-              >Grid pitch (px)<input
-                id="panel-pitch"
-                type="number"
-                value="80"
-                min="16"
-                max="400"
-            /></label>
-          </div>
-          <div class="form-row">
-            <label
-              >Grid origin X<input
-                id="panel-origin-x"
-                type="number"
-                value="400" /></label
-            ><label
-              >Grid origin Y<input
-                id="panel-origin-y"
-                type="number"
-                value="100"
-            /></label>
+          <div class="panel-standard">
+            <span class="eyebrow">HE8 · INTERCHANGEABLE PANEL GRID</span>
+            <p>
+              8 × 8 inches · TOP ↑<br />1 × ½ inch diamonds · 2:1 projection<br />Fixed
+              origin at the top-left corner.
+            </p>
+            <a href="/panel-template.pdf" target="_blank" rel="noopener"
+              >Print the measured template ↗</a
+            >
+            <a href="/panel-grid.svg" download>Download 8-inch SVG ↓</a>
+            <p class="muted">
+              Crop scans to the physical panel edges, with TOP up. Compare the
+              artwork to the overlay; the importer cannot verify drawn grid
+              alignment yet.
+            </p>
           </div>
           <div class="form-row">
             <label
@@ -299,6 +287,7 @@
           <p id="panel-feedback" role="status" class="muted"></p>
         </aside>
         <section>
+          <div class="panel-top">↑ TOP — KEEP THIS EDGE UP ON EVERY PANEL</div>
           <div class="panel-canvas-wrap">
             <canvas
               id="panel-canvas"
@@ -306,11 +295,11 @@
             ></canvas>
             <div id="panel-empty">
               <h2>Your ink. Your underworld.</h2>
-              <p>Add an 8 × 8 or 10 × 10 inch panel scan to begin.</p>
+              <p>Add an 8 × 8 inch scan, cropped to the panel edges, TOP up.</p>
             </div>
           </div>
           <div class="panel-foot">
-            <span>30° axes · equal grid scale across panels</span
+            <span>TOP ↑ · 2:1 grid · horizontal and vertical seams match</span
             ><span>Draft only · not loaded into gameplay</span>
           </div>
           <div class="connection-heading">

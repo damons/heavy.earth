@@ -1114,3 +1114,32 @@ dialog::backdrop {
   outline: 2px solid #fff;
   outline-offset: 3px;
 }
+
+.panel-standard {
+  border: 1px solid #444;
+  padding: 15px;
+  line-height: 1.8;
+  font-size: 12px;
+}
+.panel-standard p {
+  margin: 12px 0;
+}
+.panel-standard a {
+  display: block;
+  color: #ddd;
+  margin: 9px 0;
+}
+.panel-top {
+  font: 10px monospace;
+  letter-spacing: 1px;
+  color: #bbb;
+  text-align: center;
+  padding: 12px;
+  border: 1px solid #454545;
+  border-bottom: 0;
+}
+@media (max-width: 720px) {
+  .panel-standard {
+    grid-column: 1/-1;
+  }
+}

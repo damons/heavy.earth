@@ -29,10 +29,12 @@ The server binds IPv4 loopback, serves an explicit asset allowlist, validates Ho
 
 ## Renderer boundary
 
-The canvas projects integer map coordinates into true 30° isometric diamonds. It draws raised floors, walls, doors, geometric fixtures, and player/encounter tokens in grayscale. Projection inversion supports one-square pointer movement; arbitrary click-to-path movement is not implemented. The engine decides whether a submitted cardinal step is legal.
+The canvas projects integer map coordinates into 2:1 dimetric diamonds. `game/web/grid.js` is shared by rendering, panel authoring and the printable asset generator; its exact rational slope also guarantees identical 8-inch templates meet at every horizontal/vertical seam. It draws raised floors, walls, doors, geometric fixtures, and player/encounter tokens in grayscale. Projection inversion supports one-square pointer movement; arbitrary click-to-path movement is not implemented. The engine decides whether a submitted cardinal step is legal.
 
 Drawing uses deterministic texture formulas independent of gameplay RNG. There is no animation loop. Redraws occur on state changes, resize, pan/zoom, and pointer feedback. Current fixtures are geometric placeholders. `registerSprite(key, image, anchor)` provides a replacement point for loaded grayscale PNG sprites with a ground-contact anchor. A production asset loader and unique monster artwork are future work.
 
 ## Custom worlds
+
+Panel draft version 2 enforces the HE8 physical standard and rejects legacy 30° version-1 drafts without changing their files or annotations. Grid alignment is independent of connection placement. Original game save coordinates do not change.
 
 The current engine addresses hardcoded original `Dungeon` data and 20 × 20 × 20 coordinates. Panel metadata cannot simply be attached to it to make arbitrary maps playable. The next stage needs a deliberate map-provider abstraction, stable room IDs, custom-world state, connector transitions, and versioned saves. Keep the legacy provider’s behavior covered by original oracle tests while introducing that extension separately.

@@ -51,8 +51,8 @@ DND’s original checkout and saves are unchanged. To bring an existing Rust cha
 The **Panel workshop** tab is the beginning of the hand-drawn map pipeline:
 
 1. Add a square PNG, JPEG, or WebP scan, up to 8 MB.
-2. Choose an 8 × 8 or 10 × 10 inch physical panel.
-3. Align the 30° grid using pitch and origin controls. Changing physical size maintains the current physical grid pitch.
+2. Use an **8 × 8 inch** board with its marked **TOP up**.
+3. Draw from the shared HE8 template: **1 × ½ inch diamonds, exact 2:1 slope, top-left origin**. Crop the scan to the board edges and compare it to the fixed overlay.
 4. Preview a black/white threshold and inspect sampled pixels.
 5. Mark reviewed cells as walkable or blocked.
 6. Add passage endpoints, choose their directions, and link them between panels. Links are reciprocal.
@@ -62,7 +62,9 @@ Try [the synthetic two-panel draft](examples/two-panel-draft.json) using **Impor
 
 The workshop works locally in the browser and sends no artwork to the Rust server. It exports 800 × 800 grayscale preview images inside the draft. **Keep original high-resolution scans separately.** Drafts are not autosaved; export before closing. Imports merge into the current workshop and reject duplicate IDs.
 
-**Custom panels are not playable yet.** Thresholding is a preview, not an automatic navigation classifier. Grid lines, hatching, shadows, and furniture must be distinguished from solid earth before maps enter gameplay. The initial 0.8-inch horizontal tile diagonal is a provisional calibration value; matching the artist’s actual graph paper comes before committing a production physical scale.
+**Custom panels are not playable yet.** Thresholding is a preview, not an automatic navigation classifier. Grid lines, hatching, shadows, and furniture must be distinguished from solid earth before maps enter gameplay. Every conforming HE8 panel’s grid matches any other panel on all four sides. Actual scan alignment still needs review. Earlier version-1 drafts are rejected rather than silently reinterpreted.
+
+Print the [measured 8-inch template](output/pdf/heavy-earth-8x8-template.pdf) at Actual Size / 100%, or use the [8-inch SVG](game/web/panel-grid.svg). Its second PDF page demonstrates horizontal and vertical seams. Mark TOP on each board.
 
 See the [roadmap](docs/ROADMAP.md) and [panel format / art specification](docs/PANELS.md).
 
@@ -71,6 +73,7 @@ See the [roadmap](docs/ROADMAP.md) and [panel format / art specification](docs/P
 | Location | Responsibility |
 | --- | --- |
 | `game/src/` | Local HTTP server, save/session transactions, visibility-safe presentation adapter |
+| `game/web/grid.js` | Shared game/panel/print projection and fixed HE8 physical dimensions |
 | `game/web/renderer.js` | Canvas projection, picking, grayscale geometry, sprite registration seam |
 | `game/web/app.js` | Character creation, controls, context actions, spellbook, journal |
 | `game/web/panels.js` | Scan calibration, reviewed cells, passage links, draft import/export |
@@ -80,7 +83,7 @@ See the [roadmap](docs/ROADMAP.md) and [panel format / art specification](docs/P
 
 Rules, encounter scheduling, random state, original dungeon bytes, and persistence come directly from `dnd-rs`. This is a new renderer for the **current recreation**, with the same [known fidelity limitations](vendor/dnd/docs/FIDELITY.md). It is not a claim of exact equivalence to every DOS behavior.
 
-The graphical fixtures and character are geometric placeholders. Sprite artwork can replace them through a registry with ground-contact anchors. The renderer uses true isometric 30° axes, no walking animation, and grayscale only.
+The graphical fixtures and character are geometric placeholders. Sprite artwork can replace them through a registry with ground-contact anchors. The renderer uses the same exact **2:1 dimetric projection** as the physical panels, no walking animation, and grayscale only.
 
 ## Verify
 
@@ -95,7 +98,7 @@ python3 scripts/smoke_http.py
 npm test  # optional development check; Node 22+, no npm install required
 ```
 
-The workspace runs 54 original tests and 5 adapter tests. Node checks projection/picking and panel draft integrity. HTTP smoke tests use disposable saves, including a full server restart. [Validation notes](docs/VALIDATION.md) record browser checks and limits.
+The workspace runs 54 original tests and 5 adapter tests. Node checks projection/picking, arbitrary panel placement, printable grid seams, and panel draft integrity. HTTP smoke tests use disposable saves, including a full server restart. [Validation notes](docs/VALIDATION.md) record browser checks and limits.
 
 CI pins Rust 1.95.0, the engine snapshot’s tested toolchain, so new Clippy lints do not force edits to the frozen source.
 

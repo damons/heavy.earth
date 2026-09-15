@@ -1,16 +1,6 @@
-// True isometric axes: +/-30 degrees. Square-world movement remains N/E/S/W.
-export const ISO = Object.freeze({ angle: Math.PI / 6, pitch: 128 });
-export function project(x, y, pitch = ISO.pitch) {
-  return {
-    x: ((x - y) * pitch) / 2,
-    y: (((x + y) * pitch) / 2) * Math.tan(ISO.angle),
-  };
-}
-export function unproject(x, y, pitch = ISO.pitch) {
-  const a = x / (pitch / 2),
-    b = y / ((pitch / 2) * Math.tan(ISO.angle));
-  return { x: (a + b) / 2, y: (b - a) / 2 };
-}
+// 2:1 dimetric projection shared with every physical panel.
+import { ISO, project, unproject } from "./grid.js";
+export { ISO, project, unproject } from "./grid.js";
 // Future PNG sprites register here with their ground-contact anchor.
 export const spriteRegistry = new Map();
 export function registerSprite(key, image, anchor = { x: 0.5, y: 1 }) {

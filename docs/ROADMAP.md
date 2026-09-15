@@ -4,13 +4,13 @@
 
 Turn the existing DOS DND recreation into a graphical, monochrome isometric dungeon crawler. Keep its current gameplay and rules while making room for a world built from the artist’s physical dungeon drawings.
 
-The intended source medium is pen and ink / scratch art on Ampersand Claybord panels, primarily **8 × 8 inches**, with **10 × 10 inches** supported as a physical-size variant. Each panel depicts part of a level, not an entire level. All panels share identical grid angles and physical scale. Assemble a level from panels and join them at explicitly identified tunnels, doorways, stairs, and other passages. White represents potential navigable space; black represents solid earth or off-limits regions.
+The intended source medium is pen and ink / scratch art on Ampersand Claybord panels, restricted to **8 × 8 inches**, with a marked TOP kept up on every panel. Each panel depicts part of a level, not an entire level. All panels share the fixed HE8 2:1 grid, 1 × ½ inch diamonds, and a top-left corner origin. Every panel can occupy any mosaic slot; grid seams match on all four sides. Assemble a level from panels and join them at explicitly identified tunnels, doorways, stairs, and other passages. White represents potential navigable space; black represents solid earth or off-limits regions.
 
 ## 1. Play the existing dungeons in isometric view — implemented
 
 - Separate Heavy Earth repository, build, launcher, and saves.
 - Unchanged, pinned Rust DND engine and original 100 levels.
-- True isometric 30° axes, grayscale floors and raised wall geometry.
+- Exact 2:1 dimetric axes, grayscale floors and raised wall geometry.
 - Instant player movement; no walking animation or real-time simulation.
 - Placeholder graphical player, monster, and fixture forms.
 - Original character creation/rerolls, combat, spells, room actions, store, travel, death, victory, and save/resume.
@@ -20,7 +20,9 @@ The intended source medium is pen and ink / scratch art on Ampersand Claybord pa
 ## 2. Establish the art-panel workflow — initial skeleton implemented
 
 - Local square-scan upload and grayscale preview.
-- Physical dimensions, isometric pitch, and origin calibration.
+- Locked 8-inch HE8 dimensions, 2:1 projection, grid pitch, corner origin, and TOP orientation.
+- Print-at-100% PDF and exact-size SVG templates, with scale checks and a four-panel seam illustration.
+- Automated checks of actual template edges and arbitrary board placements.
 - Adjustable threshold preview with pixel inspection.
 - Explicit walkable/blocked annotations, separate from image pixels.
 - Named panels, assembly coordinates, connector locations and directions.
@@ -28,8 +30,9 @@ The intended source medium is pen and ink / scratch art on Ampersand Claybord pa
 
 Still needed before this becomes a production authoring tool:
 
-- Work with the artist’s real 8 × 8 and 10 × 10 samples to settle graph spacing, margins, and registration marks. **Do not print a batch of physical boards against the provisional 0.8-inch diagonal.**
-- A printable, measured grid master and scanner calibration target.
+- Test the HE8 template on a real 8-inch board and verify the print with a ruler.
+- Register existing artwork to HE8 without silently reinterpreting old geometry.
+- Scanner registration targets and automatic alignment to the fixed grid (the measured grid master is implemented).
 - High-resolution originals, nondestructive crop/deskew, image rotation and perspective correction; distinguish scanning resolution from in-world scale.
 - A visual overview for arranging an entire mosaic of physical panels.
 - Undo/redo, draft autosave, project asset storage, panel replacement/removal, and export validation reports.
@@ -70,7 +73,7 @@ Acceptance example: enter a tunnel on panel A; emerge at its configured tunnel c
 
 ## Open art decisions
 
-- Does the existing hand-drawn graph use true 30° axes or a 2:1 game projection? The initial renderer uses 30°. An example board should settle the production standard before new art is commissioned.
-- What measured tile size gives comfortable drawing density on an 8-inch board?
+- New art uses HE8: 8-inch boards, 1 × ½ inch diamonds, 2:1 projection, TOP up. These geometry decisions are settled.
+- How should older art using different geometry be registered or adapted while preserving the originals?
 - How should intentional overhangs, tunnels under other rooms, and elevation appear in navigation metadata?
-- Are 10-inch panels larger areas at the same scale, or are they cropped into 8-inch modules? The current direction is the former, preserving common physical scale.
+- What standard edge locations and widths should doors/tunnels use so separately drawn panels can connect as readily as their grids?
