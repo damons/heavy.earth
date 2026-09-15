@@ -42,7 +42,7 @@ export function face(
           "#666",
           0.24,
         );
-        for (let k = 0; k < (dark ? 10 : 5); k++) {
+        for (let k = 0; k < (dark ? 5 : 3); k++) {
           const a = x0 + (x1 - x0) * r(),
             b = y0 + (y1 - y0) * r();
           const end = Math.min(x1 - 0.005, a + 0.03 + r() * 0.06);
@@ -68,7 +68,7 @@ export function face(
       }
     }
   }
-  for (let k = 0; k < (dark ? 90 : 35); k++) {
+  for (let k = 0; k < (dark ? 24 : 10); k++) {
     const u = 0.015 + 0.94 * r(),
       v = 0.04 + 0.92 * r();
     if (!dark && r() > 0.3 && v < 0.65) continue;

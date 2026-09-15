@@ -7,7 +7,7 @@
 - `cargo clippy --workspace --all-targets -- -D warnings`: passed.
 - `cargo fmt --all --check`: passed.
 - `cargo build --release --locked`: passed on macOS with Rust 1.95.
-- `npm test`: **15 passing tests** — 6,400 projection/inverse tile-picking checks, 625 arbitrary board positions, panel permutations, exact SVG seam crossings on all four edges, fixed-standard/legacy rejection, reciprocal links, malformed drafts, and the HE8 example project.
+- `npm test`: **17 passing tests** — 6,400 projection/inverse tile-picking checks, 625 arbitrary board positions, panel permutations, exact SVG seam crossings on all four edges, fixed-standard/legacy rejection, reciprocal links, malformed drafts, and the HE8 example project.
 - Half-inch grid update: 0.5 × 0.25 inch diamonds; 16 horizontal and 32 vertical repeats per board. SVG checks cover all 94 lines, with 62 interior endpoints on each vertical edge and 30 on each horizontal edge. Coarse 1-inch drafts are explicitly rejected.
 - Grid-first samples: every SVG floor polygon and sidecar polygon matches `cellPolygon`; 2,860 crop positions verify exact size, center, area and slopes. Version-3 tests cover nonmutating v2 upgrade, per-level slots, directed stair/pit links, invalid targets, transport modes and same-level passage constraints.
 - PDF checks: two US Letter pages; the tracing square is exactly 576 × 576 points (8 × 8 inches); both pages rendered and visually inspected. The PDF/SVG and fixture generator reads the shared grid module.
@@ -43,6 +43,15 @@ Checked the local game in the Codex browser:
 - Compared the full draft against the previous version with only image payloads removed: all panel coordinates, classifications and navigation markers are unchanged. Cell sidecars, geometry specification and master grid are byte-for-byte unchanged.
 - All 15 JavaScript tests pass against the styled SVGs. All four print PNGs are 2400 × 2400 and strictly grayscale.
 - Imported the refreshed draft in the browser and re-exported the Entrance Hall atlas; all 324 PNG cuts remain 50 × 25 RGBA with transparent corners. Inspected the gallery with the exact overlay enabled.
+
+## Detailed connected-panel update
+
+- Rebuilt the four illustrations as a single continuous scene cropped into a 2 × 2, 16-inch assembly. All four panels now share level 1, with four reciprocal passage pairs; stairs and pits use engine-governed destinations.
+- Added arches, a raised gate, a broken portal, skull shelves, cobwebs, bones, rubble, urns, crates, barrels, engraved tombs, a fallen column and explicit large-object footprints.
+- All 17 JavaScript tests pass. New tests measure every physical edge opening, reject undeclared openings, check the eight reciprocal endpoints against global grid coordinates, and verify all 953 walkable/item cells are connected around objects and pits.
+- Compared each 800-pixel panel render against its corresponding assembly crop: only 5–26 raster antialias pixels differ per panel (maximum 7/255 intensity), with exact vector ground geometry unchanged by cropping. Every print image is 2400 × 2400 and strictly grayscale.
+- Browser checks: assembled grid/seam toggles, connected draft import, selected passage destinations, and refreshed export of all 359 Entrance Hall diamonds. Every crop is 50 × 25 RGBA with transparent corners.
+- The 56-file engine snapshot remains unchanged. The new samples are authoring fixtures; they are not loaded into gameplay.
 
 ## Limits
 

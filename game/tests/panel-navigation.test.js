@@ -200,7 +200,20 @@ test("cell categories are versioned and the exported atlas preserves ground poly
     ),
   );
   assert.equal(atlas.format, "heavy-earth-cell-art");
-  assert.equal(atlas.tiles.length, 324);
+  const current = JSON.parse(
+    await readFile(
+      new URL(
+        "../../examples/calibrated-panels/four-panel-draft.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  );
+  const source = current.panels.find((p) => p.id === atlas.panelId);
+  assert.deepEqual(
+    atlas.tiles.map(({ x, y, kind }) => ({ x, y, kind })),
+    source.cells,
+  );
   for (const t of atlas.tiles) {
     const g = cellCropGeometry(t.x, t.y);
     assert.deepEqual(t.polygon, g.polygon);

@@ -1,46 +1,57 @@
-# Calibrated HE8 samples — grid first
+# Connected HE8 ink panels
 
-These four samples are constructed directly from HEAVY.EARTH's shared projection. They replace the earlier AI-painted samples **for geometry and slicing tests**. The earlier illustrations remain available as visual references; no warp or relabeling of their inaccurate grids was performed.
+Four detailed, grayscale vector illustrations constructed on the exact HE8 floor grid. The artwork includes rubble, bones, skull niches, cobwebs, urns, crates, barrels, engraved tombs, an altar, a fallen column, torches, stone chips and scratchboard earth textures.
 
-## Files
+## Assemble the boards
 
-- [Visual gallery](index.html), including an exact overlay toggle and 8-inch print layout.
-- [Four-panel workshop draft](four-panel-draft.json), with cell tags and level markers.
-- [Exact transparent grid](grid-overlay.svg).
-- [Physical geometry specification](geometry.json).
-- [Entrance Hall cell-art atlas](entrance-cell-art.json), exported by the workshop: 324 transparent diamond cuts with classifications.
+Keep TOP up and place the panels flush, without gutters or rotation:
 
-| Panel | Files | Level / navigation example |
+| | Left column | Right column |
 | --- | --- | --- |
-| Entrance Hall | [SVG](01-entrance-hall.svg) · [PNG](01-entrance-hall.png) · [Cells](01-entrance-hall-cells.json) | Level 1; stairs down to Ossuary, Excelsior Transporter |
-| Silent Shrine | [SVG](02-silent-shrine.svg) · [PNG](02-silent-shrine.png) · [Cells](02-silent-shrine-cells.json) | Level 1; local steps and pit to Cistern landing |
-| Dry Cistern | [SVG](03-dry-cistern.svg) · [PNG](03-dry-cistern.png) · [Cells](03-dry-cistern-cells.json) | Level 2; arrival point, upward elevator |
-| Ossuary | [SVG](04-ossuary.svg) · [PNG](04-ossuary.png) · [Cells](04-ossuary-cells.json) | Level 2; return stairs, random teleporter |
+| Top row | Entrance Hall (0, 0) | Silent Shrine (1, 0) |
+| Bottom row | Dry Cistern (0, 1) | Ossuary (1, 1) |
 
-Use **Panel workshop → Import panel draft** in an empty workshop. Hide **Show cell tags** to inspect the art beneath the exact overlay. The tags deliberately record object footprints separately from open floors. Toggle **Show grid overlay** to compare the illustration with the master grid.
+The four rooms form a continuous loop on **dungeon level 1**. Corridors bend between the rooms; doorways include stone arches, a damaged portal and a raised gate. The complete assembly measures **16 × 16 inches**.
 
-## Exact construction
+| Shared edge | Opening measured from the edge's top/left corner |
+| --- | --- |
+| Entrance Hall right ↔ Silent Shrine left | 3–3½ inches down |
+| Entrance Hall bottom ↔ Dry Cistern top | 3–4 inches across |
+| Silent Shrine bottom ↔ Ossuary top | 5–6 inches across |
+| Dry Cistern right ↔ Ossuary left | 5–5½ inches down |
 
-1. Use the master HE8 origin, angle, and physical scale to create the cell graph.
-2. Draw each floor polygon from `cellPolygon(x,y)`; do not estimate the grid from the picture.
-3. Add deterministic pen-and-ink textures on those cells: fine cracks, stippling, and chipped stone contours.
-4. Extrude architectural ground edges vertically, using the same projection for their horizontal axes; add masonry courses, crosshatching, carved niches, and scratched highlights within those surfaces.
-5. Export the SVG, 2400 × 2400 PNG, 800 × 800 preview, and cell-coordinate sidecar.
+All other physical edges are closed. Full and partial floor diamonds continue through each seam. A single continuous scene supplies the wall, earth and prop artwork on both sides of every cut. Reciprocal workshop connectors identify the same split diamond at each boundary.
 
-An 8-inch SVG has viewBox `0 0 800 800`. A diamond is exactly 50 × 25 preview units, or ½ × ¼ inch, with slopes ±1/2. All 94 master grid lines derive from the shared module. No generative image model controls this sample set's geometry.
+Any HE8 panel's **grid** can match another HE8 panel. These particular **passages** match in the arrangement above; rearranging boards requires matching their passage positions too.
 
-The ink-and-stone treatment preserves the original cell classifications, floor polygons, and level-navigation markers. Earth scratches are masked away from floor cells, and recessed masonry is clipped to the pit footprints. Ornament is procedural vector artwork, not scanned or hand-drawn art.
+## Files and workshop use
 
-SVG groups are `grid-first`, `ink-detail`, and `architecture`. The transparent full-panel grid is a separate file. Raised surfaces have a vertical screen offset; their ground anchors still follow the grid. The PNG is a flattened preview of these layers; the SVG retains the layers for later authoring tools.
+- [Gallery](index.html): seamless assembly, separate panels, grid overlay and seam toggle.
+- [Assembled PNG](assembly.png) / [16-inch SVG](assembly.svg).
+- [Four-panel workshop draft](four-panel-draft.json): reviewed cell tags, eight reciprocal passage endpoints and level markers.
+- [Passage specification](assembly.json), [geometry](geometry.json), [transparent grid](grid-overlay.svg).
+- [Entrance Hall atlas](entrance-cell-art.json): browser-exported transparent diamond cuts.
+- Each numbered panel has an 8-inch SVG, 2400 × 2400 print PNG, 800 × 800 preview, and `-cells.json` sidecar with projected polygons and object footprints.
 
-The 2400-pixel PNG corresponds to 300 pixels per inch **when printed at 8 × 8 inches**. Set print dimensions explicitly; automatic printer scaling or PNG resolution metadata must not change the board size. Keep TOP up. The exact grid can tile with any conforming panel, but this sample pack's artwork at panel edges is not a certified network of connecting passages.
+In an empty **Panel workshop**, choose **Import panel draft**. Hide **Show cell tags** to inspect artwork beneath the exact overlay. Passage destinations are already linked. Stairs, pits and magical transport retain explicit level markers; their destinations use game rules or are unassigned arrivals. This replaces the earlier sample's two-level arrangement so all four physical boards can connect on one level.
 
-## What is and is not verified
+## Artwork and classification
 
-Automated tests compare every rendered floor polygon and every sidecar cell polygon with the shared projection. They check exact slopes, diamond size/area, master-grid seams, destination levels, and draft validity. Illustrations were rendered and visually inspected.
+1. Construct the complete floor graph with exact ½ × ¼ inch diamonds, slopes ±½ (±26.565051°).
+2. Illustrate that graph using projected surfaces and deterministic pen-and-ink detail.
+3. Crop the shared scene into four 8-inch boards, preserving the top-left grid origin and partial edge cells.
+4. Export cell metadata separately from the visible artwork.
 
-These are deterministic calibration fixtures, not finished hand-drawn art or playable custom maps. Navigation markers are authoring metadata. Tall architecture can cover neighboring ground cells in the flattened picture; cell cuts preserve visible pixels, not hidden surfaces. Detailed navigation, room effects, edge passability and full-resolution sprite extraction still need implementation.
+SVG layers remain `grid-first`, `ink-detail`, and `architecture`. Raised objects have a vertical offset; their ground footprints use the same projection. Large rubble piles, the fallen column, furniture and fixtures are tagged **object**. Chests are **item**. Small loose bones, chips, floor engravings, and wall-mounted details are decorative; they do not automatically block movement. Recessed pits are **blocked**. The sidecars list the large features explicitly.
 
-The atlas is an application export; re-export it after changing the entrance artwork or annotations.
+This deliberately exercises the ambiguity of a detailed user scan: dark ink can be a wall, a bone, an engraving or a shadow. Thresholding alone cannot resolve those meanings. Manual cell review is still required. Flattened diamond cuts contain visible pixels, including any tall structure occluding that cell; they do not recover hidden floors or isolate whole sprites.
 
-Regenerate with `node scripts/generate_calibrated_panels.mjs` (Node and `rsvg-convert` required), then run `npm test`. The process renders new vector artwork and leaves the earlier raster illustrations unchanged.
+## Validation and printing
+
+Tests compare every rendered ground polygon with the shared grid, measure every edge opening, verify reciprocal connector coordinates, and flood-fill all walkable cells around pits and objects. The four preview crops are also compared with the rendered assembly to check visible continuity. This is calibrated procedural artwork, not AI-painted geometry or scanned hand-drawn art.
+
+Print each panel at **8 × 8 inches**, Actual Size / 100%, with TOP up. A 2400-pixel panel gives 300 pixels per inch at that size. Measure the physical output; print/scan distortion is outside the digital geometry guarantee.
+
+Regenerate with `node scripts/generate_calibrated_panels.mjs` (Node and `rsvg-convert` required), then re-export the Entrance Hall cell atlas from the workshop and run `npm test`. The earlier AI-painted reference panels remain unchanged in `examples/ink-panels`.
+
+The sample draft is not yet playable as a custom dungeon; engine integration remains on the roadmap.

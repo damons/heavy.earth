@@ -56,4 +56,4 @@ A marker has the form:
 
 `destination` is `null` (unassigned / no outgoing travel), `"engine"`, or an explicit `{ "marker": "stable-id" }`. Marker IDs must be unique across the draft. Landings and local steps require null; magical transport allows null or engine; fixed destinations must match travel direction and adjacent level. Missing targets and invalid levels are rejected.
 
-See [calibrated panels](../examples/calibrated-panels/README.md) for an importable two-level example.
+See [calibrated panels](../examples/calibrated-panels/README.md) for an importable four-board assembly with reciprocal passages and engine-governed level markers.
