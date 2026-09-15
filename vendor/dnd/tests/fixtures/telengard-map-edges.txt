@@ -1,0 +1,41 @@
+IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+I       I       I       I                                                       I
+I       I       IIIII   I   IIIII   IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+I       I               I   I   I   I               I                       I   I
+I       IIIIIIIII       IIIII   I   I   IIIII   I   I   IIIIIIIIIIIII       I   I
+I                       I       I   I   I       I   I   I           I       I   I
+I   I   IIIIIIIIIIIII   I       I   I   IIIII   I   I   I           I       I   I
+I   I   I           I   I       I               I   I               I       I   I
+I   IIIII---I---I---I   I       I   IIIIIIIII   I   I   I           I       I   I
+I                                               I   I   I           I       I   I
+I   IIIII   IIIII   I       IIIIIIIIIIIIIIIIIIIII   I   IIIIIIIIIIIII       I   I
+I       I           I                                   I                   I   I
+I       I       I   IIIIIIIII   IIIIIIIIIIIIIIIII   I   IIIIIIIIIIIIIIIIIIIII   I
+I               I           I                       I                           I
+IIIIIIIIIIIII   IIIIIIIII   I       IIIIIIIIIIIIIIIII   IIIIIIIIIIIIIIIIIIIII   I
+I           I   I           I                           I                       I
+IIIIIIIII   I   IIIIIIIII   I               I           I   IIIIIIIIIIIIIIIIIIIII
+I       I   I   I           I               I           I                       I
+I   I   I   IIIIIIIIIIIIIIIII               I   I       IIIIIIIIIIIIIIIIIIIII   I
+I   I   I           I                       I   I                               I
+I   I   I           IIIII   IIIIIIIIIIIII   I   I   IIIII---IIIIIIIIIIIIIIIII   I
+I   I   I               I   I           I   I   I   I       I               I   I
+I   I   IIIIIIIII---IIIII   I   IIIII   I   I   I   I       I       I       I   I
+I   I                       I   I   I   I   I   I   I       I       I       I   I
+I   IIIIIIIIIIIIIIIII       I   I   I   I   I   I   IIIII   I   I---IIIII---I   I
+I   I                       I       I   I   I   I       I   I   I       I   I   I
+I   I       IIIIIIIIIIIIIIIIIIIII---I   I   I   I       I---IIIII       I   I   I
+I                                       I   I   I       I       I       I       I
+I   IIIIIIIIIIIIIIIIIIIIIIIII           I   I   IIIII   I       IIIIIIIII   I   I
+    :   I   I                           I   I   I   I   I                   I   I
+I   IIIII   I               IIIIIIIIIIIII   I   I   I   IIIIIIIIIIIIIIIIIIIIIIIII
+I                               :       I           I                           I
+I---IIIII---IIIII---IIIII---IIIII   I   IIIIIIIIIIIII   IIIIIIIIIIIII   I   I   I
+I       I       I       I       I   I                               I   I   I   I
+I       I       I       I       I   I   I           I   I       I   I   I   I   I
+I       I       I       I       I   I   I           I   I       I   I   I   I   I
+IIIII---IIIII---IIIII---IIIII---I   I   IIIIIIIII   I   IIIIIIIII   I   I   I   I
+I       I       I       I       I   I           I   I   I           I   I   I   I
+I       I       I       I       I   I   IIIIIIIII   I   I           I   IIIII   I
+I       I                       I   I           I   I               I           I
+IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII

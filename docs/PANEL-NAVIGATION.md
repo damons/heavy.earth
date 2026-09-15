@@ -1,0 +1,103 @@
+# Panel levels, markers, and cell artwork
+
+The workshop records navigation intent separately from the illustration. Custom panels can be walked in the workshop layout test; they are not loaded into the adventure engine. The original Rust game rules remain unchanged.
+
+## Levels and passages
+
+Each panel has a `level`: 0 represents the surface, 1 is the first dungeon level, and higher numbers go deeper. The authoring format permits 0–1000; this does not expand the existing game's 20-level dungeons. Assembly coordinates are unique **within a level**. Two boards can occupy [0,0] on different levels.
+
+Ordinary passage connectors remain reciprocal and must join two panels on the same level. Use level markers for vertical travel. A scan is assigned to one dungeon level; artwork that depicts stacked, overlapping floors will eventually need separate selectable floor layers.
+
+## Marking level navigation
+
+In **Panel** view, use **Panel features** above the artwork:
+
+1. Choose a **Feature type**, click **Add feature**, then click its diamond on the panel. Placement returns to selection mode after adding one feature.
+2. Click **Select feature**, then its diamond, or choose **Select L1/L2/etc.** in the **Feature list**. The selected ground diamond is outlined. Repeated clicks cycle through features sharing a cell, such as up and down stairs.
+3. Use **Feature list** to jump to the controls below the artwork. Change the type or destination there. Click **Move L1/L2/etc.**, then its new diamond, to relocate it while retaining its identity and links.
+4. Click **Remove** on its feature row to delete it. Removing a destination clears incoming links; changing a type clears only links that no longer fit the new type. The status explains when links were cleared.
+
+Feature edits autosave with the active dungeon. These are navigation markers: adding or removing them does not repaint scanned art or change cell classifications. For example, removing a pit marker from a blocked cell leaves that cell blocked until you mark it walkable. A new stair needs a reviewed safe cell and an assigned destination to work in Play-test draft.
+
+| Kind | Symbol | Meaning |
+| --- | --- | --- |
+| Stairs up | ↑ | Climb to the adjacent shallower level |
+| Stairs down | ↓ | Descend to the adjacent deeper level |
+| Pit drop | ⇣ | One-way drop; avoidance and damage are game rules |
+| Arrival / landing | ◎ | Explicit arrival cell, with no outgoing travel |
+| Steps within this level | ≋ | Visual elevation change; no dungeon-level transition |
+| Excelsior Transporter | EX | Player-selected level, governed by the engine |
+| Random teleporter | TP | Random destination governed by the engine |
+| Elevator up | ⇡ | Automatic upward travel, governed by the engine |
+
+For stairs, pits, and elevators, choose **Game rules** or an explicit stair/landing on the adjacent level. Fixed links are directed: create and link a return stair separately. For an up-and-down staircase, place both kinds on the same source cell. Removing a destination clears incoming links to **Unassigned — needs review**; it never invents a replacement.
+
+A panel's level cannot be changed if doing so would break an existing passage/level link or collide with another board. Unassign the affected links first. This protects authored destinations from silent reinterpretation.
+
+Transporters and teleporters cannot be authored as fixed links in this skeleton. The Excelsior Transporter uses the current game’s level selection, price, Orb, and Time Stop behavior. Random teleporters use its random destination rules. An `engine` destination records intent only; it does not enable these fixtures on custom panels yet. The same is true of pit damage/avoidance and elevator restrictions. No new navigation behavior has been added to the frozen engine.
+
+## Cell classification and cutting artwork
+
+The click tools label a cell as walkable (`open`), blocked, wall, object, or item. An object/item label does **not** declare that cell walkable or blocked. Object identity, multi-cell footprints, independent passability, collectible behavior and inventories are later authoring work.
+
+**Export marked cell artwork** creates a JSON atlas containing every marked cell on the selected panel. Each cell includes:
+
+- Its grid coordinates and classification.
+- An exact ground-plane polygon and pixel origin.
+- An embedded 50 × 25 pixel PNG clipped to the diamond, with transparent corners.
+- Panel ID/level; the atlas also retains the panel's level markers.
+
+The cuts use the source preview image, excluding editor grid lines, cell tags, and navigation badges. The first 24 cuts can be inspected in the export preview. A download link stays available after export. Save the full panel draft separately; exporting an atlas does not save workshop edits.
+
+These are screen-space cuts of a flattened illustration. They cannot reconstruct hidden floor pixels or turn a tall sarcophagus spanning several diamonds into an isolated sprite. The calibrated SVG samples retain separate architecture and ink groups for that future work. The atlas currently exports at workshop preview resolution; full-resolution cutting remains planned.
+
+## Version 3
+
+New exports use draft version 3. Current half-inch version-2 drafts import by copying each panel with `level: 1` and `transitions: []`; existing artwork, cell coordinates, passages, origins, and IDs remain intact. The original file is untouched. Older 30-degree or 1-inch standards remain incompatible.
+
+A marker has the form:
+
+```json
+{"id":"hall-down","x":29,"y":8,"kind":"stairs-down","destination":{"marker":"crypt-up"}}
+```
+
+`destination` is `null` (unassigned / no outgoing travel), `"engine"`, or an explicit `{ "marker": "stable-id" }`. Marker IDs must be unique across the draft. Landings and local steps require null; magical transport allows null or engine; fixed destinations must match travel direction and adjacent level. Missing targets and invalid levels are rejected.
+
+See [calibrated panels](../examples/calibrated-panels/README.md) for an importable four-board assembly with reciprocal passages and engine-governed level markers.
+
+## Overall map and stacked levels
+
+Each dungeon has three authoring views plus Play-test draft:
+
+- **Panel** edits one scan's cells, passages, level markers, and placement.
+- **Level map** joins all panels on the selected dungeon level without gutters, using their Assembly X/Y coordinates. Select a floor with **View level**. Click a panel and choose **Edit selected panel** to annotate or move it.
+- **Level stack** shows every authored level in ascending order, with the surface at level 0. Each layer uses the same X/Y extent so vertically aligned panel positions line up. The stack compresses images vertically for a schematic overview; source artwork, physical calibration and exported drafts keep their original geometry.
+
+Drag to pan, scroll or use +/− to zoom, and choose **Fit map** to reset. Keyboard users can focus the map and use arrow keys, +/−, and 0; the panel buttons below the map provide another selection route. Panel boundaries and link overlays can be hidden independently.
+
+Solid passage markers identify reciprocal endpoints that coincide at a shared physical edge. Dashed links indicate connected endpoints whose positions do not meet. These checks compare connector positions; they do not infer corridor width or passability from scanned pixels. The destination list includes all visible passages and level markers.
+
+In the stack, arrows follow explicit stair/pit destinations; reciprocal stairs have arrows at both ends, and a one-way pit has one arrow. Game-controlled transport and unassigned destinations are listed without inventing a destination on the map. Only authored levels are shown, including their actual numbers if some levels are missing.
+
+To add a level, upload a panel in **Panel** view and set its **Dungeon level** and **Assembly X/Y**. Existing linked panels may need their passage/level destinations adjusted before a move is valid. A shared X/Y slot is allowed on different levels, but two panels cannot occupy the same slot on the same level.
+
+The [six-panel stack example](../examples/calibrated-panels/stacked-levels-draft.json) demonstrates the surface plus three dungeon levels, aligned slots, paired stairs, a one-way pit, game-controlled transport and an unassigned elevator. Import it into an empty workshop; it reuses the sample artwork to demonstrate topology and is not a complete playable dungeon. Regenerate it with `node scripts/generate_stack_example.mjs` after regenerating the calibrated illustrations.
+
+Views and selection do not change draft contents. **Export panel draft** saves the whole draft from either an overview or the editor. Dungeons autosave locally; wait for the saved status before refreshing. Use **Export dungeon** for a named portable backup. See [the dungeon library](DUNGEONS.md).
+
+
+## Play-test a draft
+
+1. Import `examples/calibrated-panels/stacked-levels-draft.json` into an empty workshop (or use your current draft).
+2. Choose **Play-test draft**. The temporary player starts on a safe marked cell in the selected panel. **Start panel** changes the starting panel and resets the step count.
+3. Move with **W/A/X/D**, arrow keys, directional buttons, or by clicking an adjacent diamond. N/E/S/W follow the same isometric directions as the adventure view.
+4. On stairs, press **U** to go up or **J** to go down; matching buttons also appear. Entering a linked pit drops you automatically to its landing. **Place player** lets you click a safe cell for a targeted test; **Center player** brings it back into view.
+5. Choose **Panel**, **Level map**, or **Level stack** to leave the test. Re-entering starts a fresh test from the current draft. Wait for the dungeon’s saved status before refreshing the page.
+
+For a quick stacked example, choose **Surface gate** under Start panel and press **J** twice to descend through Entrance Hall to Dry Cistern. Press **U** twice to return. To test the one-way pit, start in **Silent Shrine**, move east five times (**D**) and south four times (**X**).
+
+The runner uses reviewed cell tags: walkable and item cells allow movement; objects, walls, blocked and unmarked cells do not. A linked pit is an exception: entering its footprint triggers its drop even if the footprint is tagged blocked. It requires a safe, marked landing. Item cells have no pickup effects in this test.
+
+A panel seam requires an aligned reciprocal passage and matching walkable openings. You can cross the full connected opening around its marker, while other edges remain blocked. Level travel follows explicit directed links, checks the destination level, and rejects blocked or missing landings. Game-governed transporters and unassigned destinations report a message without moving the player.
+
+The test owns a temporary copy of the navigation data and a graphical player marker. It does not change draft cells, art, links, adventure state, or save files. It is a layout walkthrough: combat, encounters, item effects, fog of war, sprite occlusion and custom-world adventure saving remain future work. The stack fixture reuses artwork; its authored travel markers define the test routes even where a drawing depicts a different fixture.

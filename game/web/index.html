@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <title>HEAVY.EARTH — Into the underworld</title>
+    <link rel="icon" href="/brand.png" />
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <header class="masthead">
+      <a
+        href="#"
+        id="home"
+        class="wordmark"
+        aria-label="Heavy Earth title screen"
+        ><img src="/brand.png" alt="" />HEAVY<span>.</span>EARTH</a
+      ><span class="edition">A DUNGEON IN INK & STONE</span>
+      <nav>
+        <button id="play-tab" class="nav active">Adventure</button
+        ><button id="panels-tab" class="nav">
+          Panel workshop <small>LAB</small></button
+        ><button id="help" class="nav">Field guide</button>
+      </nav>
+    </header>
+    <main id="title-screen" class="title-screen">
+      <section class="intro">
+        <div class="eyebrow">THE EARTH KEEPS ITS SECRETS.</div>
+        <h1>Descend.<br />Discover.<br /><em>Return alive.</em></h1>
+        <p>
+          The old dungeons, seen from a new angle.<br />A turn-based expedition
+          into a world of black ink,<br />white stone, and things best left
+          undisturbed.
+        </p>
+        <div class="intro-rule"></div>
+        <div class="eyebrow">FIVE DUNGEONS · ONE HUNDRED LEVELS · ONE ORB</div>
+        <img
+          class="title-mark"
+          src="/brand.png"
+          alt="Original isometric Heavy Earth lettering"
+        />
+      </section>
+      <section class="character-card">
+        <div class="eyebrow">YOUR NEXT EXPEDITION</div>
+        <h2>A name for the depths.</h2>
+        <form id="create-form">
+          <label
+            >Adventurer<input
+              id="name"
+              name="name"
+              maxlength="64"
+              value="Explorer"
+              required
+              autocomplete="off"
+          /></label>
+          <div class="form-row">
+            <label
+              >Calling<select id="class">
+                <option value="fighter">Fighter</option>
+                <option value="cleric">Cleric</option>
+                <option value="magician">Magician</option>
+              </select></label
+            ><label
+              >Dungeon<select id="dungeon">
+                <option value="telengard">Telengard</option>
+                <option value="shvenk">Shvenk’s Lair</option>
+                <option value="lamorte">Lamorte</option>
+                <option value="warren">The Warren</option>
+                <option value="cavern">The Cavern</option>
+              </select></label
+            >
+          </div>
+          <p id="class-note" class="muted">
+            Steel and endurance. Fighters need a wand to cast spells.
+          </p>
+          <button class="primary full" type="submit">
+            Roll a character <span>↗</span>
+          </button>
+        </form>
+        <div id="roll-result" hidden>
+          <div id="roll-stats" class="stats"></div>
+          <p class="muted" id="roll-hp"></p>
+          <div class="form-row">
+            <button id="reroll">Roll again</button
+            ><button id="begin" class="primary">Accept & begin ↗</button>
+          </div>
+        </div>
+        <div class="saved-heading">
+          <span class="eyebrow">SAVED EXPEDITIONS</span
+          ><button id="refresh-saves" class="text-button">Refresh</button>
+        </div>
+        <div id="saves" class="save-list"></div>
+      </section>
+    </main>
+    <main id="game-screen" class="game-layout" hidden>
+      <aside class="character">
+        <div class="eyebrow">THE ADVENTURER</div>
+        <h2 id="player-name"></h2>
+        <p class="muted" id="player-subtitle"></p>
+        <div class="health-title">
+          <span>VITALITY</span><strong id="hp-label"></strong>
+        </div>
+        <div class="health-track"><div id="hp-bar"></div></div>
+        <div id="player-stats" class="stats"></div>
+        <div class="ledger">
+          <div><span>Experience</span><strong id="xp"></strong></div>
+          <div><span>Carried gold</span><strong id="gold"></strong></div>
+          <div><span>Banked gold</span><strong id="bank"></strong></div>
+        </div>
+        <div class="section-label">EQUIPMENT</div>
+        <div id="equipment" class="ledger"></div>
+        <div class="section-label">SPELL CHARGES</div>
+        <div id="charges" class="charges"></div>
+        <button id="spellbook" class="full">
+          Open spellbook <span>B</span>
+        </button>
+        <div id="effects" class="effects"></div>
+        <div class="character-bottom">
+          <span id="save-status">Every action is saved</span
+          ><button id="save-button" class="text-button">Save now</button
+          ><button id="return-title" class="text-button">Adventures ↗</button>
+        </div>
+      </aside>
+      <section class="dungeon-section">
+        <div class="map-heading">
+          <div>
+            <div class="eyebrow" id="location-caption">BENEATH THE SURFACE</div>
+            <h1 id="location"></h1>
+          </div>
+          <div class="map-modes">
+            <button id="live-mode" class="selected">Live view</button
+            ><button id="journal-mode">Explored map <small>M</small></button>
+          </div>
+        </div>
+        <div id="viewport" class="viewport">
+          <canvas
+            id="dungeon-canvas"
+            tabindex="0"
+            aria-label="Isometric dungeon. Use W north, A west, X south, D east to move. Click an adjacent visible tile to move."
+          ></canvas>
+          <div id="town-overlay" class="scene-overlay" hidden>
+            <span class="eyebrow">A MOMENT ABOVE GROUND</span>
+            <h2>The descent awaits.</h2>
+            <p>Rested. Recovered. Ready, perhaps.</p>
+            <button id="enter-dungeon" class="primary">
+              Enter the dungeon ↘
+            </button>
+          </div>
+          <div class="canvas-tools">
+            <button id="zoom-out" aria-label="Zoom out">−</button
+            ><button id="center-view" aria-label="Center view">Center</button
+            ><button id="zoom-in" aria-label="Zoom in">+</button>
+          </div>
+          <div
+            class="compass"
+            aria-label="North is upper right, east is lower right"
+          >
+            <span>W · N ↗</span><span>A · W ↖</span><span>D · E ↘</span
+            ><span>X · S ↙</span>
+          </div>
+          <div class="view-note" id="view-note"></div>
+          <label class="journal-level" id="journal-level-wrap" hidden
+            >Level
+            <select id="journal-level"></select
+          ></label>
+        </div>
+        <div class="map-footer">
+          <span id="coordinates"></span
+          ><span id="map-hint"
+            >Click an adjacent tile to move · Drag to pan · Scroll to zoom</span
+          ><span id="turns"></span>
+        </div>
+        <section class="encounter">
+          <div>
+            <div class="eyebrow" id="phase-label">EXPLORING</div>
+            <h2 id="encounter-title"></h2>
+            <p id="encounter-note" class="muted"></p>
+          </div>
+          <div id="actions" class="action-buttons"></div>
+        </section>
+        <form id="command-form" class="command-form">
+          <label for="command">COMMAND</label
+          ><input
+            id="command"
+            placeholder="Type a command…  e.g. cast 1 6"
+            autocomplete="off"
+            maxlength="256"
+          /><button type="submit" aria-label="Submit command">↵</button>
+        </form>
+      </section>
+      <aside class="journal">
+        <div class="journal-heading">
+          <div class="eyebrow">EXPEDITION JOURNAL</div>
+          <span>↓</span>
+        </div>
+        <ol id="log" aria-live="polite" aria-relevant="additions"></ol>
+        <div class="journal-foot">
+          Find the Orb of Zot.<br />Bring it back to the light.
+        </div>
+      </aside>
+    </main>
+    <main id="panel-screen" class="panel-screen" hidden>
+      <div class="panel-heading">
+        <div>
+          <div class="eyebrow">FROM YOUR HAND TO THE UNDERWORLD</div>
+          <h1>Panel workshop.</h1>
+          <p class="muted">
+            Use the same 8-inch grid on every panel. Mark cells and connecting
+            passages.
+          </p>
+        </div>
+        <span class="badge">AUTHORING PROTOTYPE</span>
+      </div>
+      <section class="dungeon-library" aria-label="Dungeon library">
+        <h2>Your dungeons</h2>
+        <p id="dungeon-current">New unsaved dungeon</p>
+        <fieldset id="dungeon-library-controls">
+          <div class="dungeon-library-row">
+            <label
+              >Dungeon name<input
+                id="dungeon-name"
+                value="Untitled dungeon"
+                maxlength="80"
+            /></label>
+            <button id="dungeon-new">New dungeon</button>
+            <button id="dungeon-save">Save dungeon</button>
+            <button id="dungeon-copy" class="secondary">
+              Save as new dungeon
+            </button>
+          </div>
+          <div class="dungeon-library-row">
+            <label
+              >Saved dungeons<select id="dungeon-select">
+                <option value="">Choose a saved dungeon</option>
+              </select></label
+            >
+            <button id="dungeon-open">Open dungeon</button>
+            <button id="dungeon-refresh" class="secondary">Refresh list</button>
+            <label class="file-button" role="button" tabindex="0"
+              >Import dungeon<input
+                type="file"
+                id="dungeon-import"
+                accept="application/json,.json"
+            /></label>
+            <button id="dungeon-export" class="secondary">
+              Export dungeon
+            </button>
+          </div>
+        </fieldset>
+        <p id="dungeon-status" role="status">Loading dungeon library…</p>
+        <p class="muted">
+          Dungeons save automatically on this computer. Add scans or import a
+          panel draft below, then set each panel’s level and position and link
+          its passages. Export dungeon creates a portable backup.
+        </p>
+        <p id="dungeon-artifact-download" class="muted"></p>
+      </section>
+      <div id="dungeon-workspace">
+        <nav class="workshop-views" aria-label="Workshop view">
+          <button id="workshop-view-panel" class="active" aria-pressed="true">
+            Panel
+          </button>
+          <button id="workshop-view-level" aria-pressed="false">
+            Level map
+          </button>
+          <button id="workshop-view-stack" aria-pressed="false">
+            Level stack
+          </button>
+          <button id="workshop-view-test" aria-pressed="false">
+            Play-test draft
+          </button>
+        </nav>
+        <section id="panel-overview" hidden aria-label="Dungeon overview">
+          <div id="playtest-controls" hidden>
+            <div class="playtest-toolbar">
+              <label
+                >Start panel<select id="playtest-start-panel"></select
+              ></label>
+              <button id="playtest-reset" class="secondary">
+                Restart test
+              </button>
+              <button
+                id="playtest-place"
+                class="secondary"
+                aria-pressed="false"
+              >
+                Place player
+              </button>
+              <button id="playtest-center" class="secondary">
+                Center player
+              </button>
+            </div>
+            <div class="playtest-toolbar">
+              <div class="playtest-directions" aria-label="Move player">
+                <button id="playtest-north" aria-label="Move north">
+                  ↗ N · W
+                </button>
+                <button id="playtest-east" aria-label="Move east">
+                  ↘ E · D
+                </button>
+                <button id="playtest-west" aria-label="Move west">
+                  ↖ W · A
+                </button>
+                <button id="playtest-south" aria-label="Move south">
+                  ↙ S · X
+                </button>
+              </div>
+              <button id="playtest-up">Go up · U</button>
+              <button id="playtest-down">Go down · J</button>
+              <div id="playtest-actions"></div>
+            </div>
+            <p id="playtest-position"></p>
+            <p id="playtest-status" role="status"></p>
+            <p id="playtest-click-hint" class="muted"></p>
+          </div>
+          <div class="overview-toolbar">
+            <label id="overview-level-label"
+              >View level<select id="overview-level"></select
+            ></label>
+            <label class="check"
+              ><input type="checkbox" id="overview-seams" checked /> Panel
+              boundaries</label
+            >
+            <label class="check"
+              ><input type="checkbox" id="overview-links" checked /> Passage and
+              level links</label
+            >
+            <div class="overview-zoom-controls">
+              <button id="overview-zoom-out" aria-label="Zoom map out">−</button
+              ><output id="overview-zoom">100%</output
+              ><button id="overview-zoom-in" aria-label="Zoom map in">+</button
+              ><button id="overview-fit">Fit map</button>
+            </div>
+          </div>
+          <p id="overview-instructions" class="muted"></p>
+          <div class="overview-viewport">
+            <svg
+              id="panel-overview-map"
+              role="group"
+              tabindex="0"
+              aria-label="Dungeon overview. Drag to pan, scroll to zoom. Arrow keys pan; plus and minus zoom; zero fits the map."
+            ></svg>
+            <div id="overview-empty">
+              <h2>Your dungeon, assembled.</h2>
+              <p>
+                Open the Panel view to import a draft or add scanned panels.
+              </p>
+              <button id="overview-add">Open Panel view</button>
+            </div>
+          </div>
+          <div class="overview-selection">
+            <p id="overview-selection" aria-live="polite"></p>
+            <button id="overview-edit" class="secondary">
+              Edit selected panel</button
+            ><button id="overview-export" class="secondary">
+              Export panel draft ↓
+            </button>
+          </div>
+          <p id="overview-click-help" class="muted">
+            Click a panel to select it · Drag to pan · Scroll to zoom · Fit map
+            resets the view
+          </p>
+          <p id="overview-summary" class="muted"></p>
+          <div id="overview-panel-list" aria-label="Panels in this view"></div>
+          <details class="overview-routes" open>
+            <summary>Passage and level destinations</summary>
+            <ul id="overview-route-list"></ul>
+          </details>
+        </section>
+        <div class="panel-layout" id="panel-detail-layout">
+          <aside class="panel-controls">
+            <label class="file-button" role="button" tabindex="0"
+              >Add scanned panel<input
+                type="file"
+                id="panel-upload"
+                accept="image/png,image/jpeg,image/webp"
+            /></label>
+            <p class="muted">
+              Local PNG, JPEG, or WebP. Preview art is saved with this dungeon.
+              Keep your original scans separately.
+            </p>
+            <label>Panel<select id="panel-select"></select></label
+            ><label
+              >Panel name<input
+                id="panel-name"
+                value="Untitled panel"
+                maxlength="64"
+            /></label>
+            <div class="panel-standard">
+              <span class="eyebrow">HE8 · INTERCHANGEABLE PANEL GRID</span>
+              <p>
+                8 × 8 inches · TOP ↑<br />½ × ¼ inch diamonds · 2:1
+                projection<br />Fixed origin at the top-left corner.
+              </p>
+              <a href="/panel-template.pdf" target="_blank" rel="noopener"
+                >Print the measured template ↗</a
+              >
+              <a href="/panel-grid.svg" download>Download 8-inch SVG ↓</a>
+              <p class="muted">
+                Crop scans to the physical panel edges, with TOP up. Compare the
+                artwork to the overlay; the importer cannot verify drawn grid
+                alignment yet.
+              </p>
+            </div>
+            <div class="form-row">
+              <label
+                >Assembly X<input
+                  id="panel-grid-x"
+                  type="number"
+                  value="0" /></label
+              ><label
+                >Assembly Y<input id="panel-grid-y" type="number" value="0"
+              /></label>
+            </div>
+            <label
+              >Dungeon level<input
+                id="panel-level"
+                type="number"
+                min="0"
+                max="1000"
+                value="1"
+            /></label>
+            <p class="muted">
+              Level 0 is the surface; higher numbers go deeper. Panels can share
+              an assembly position on different levels.
+            </p>
+            <label
+              >Ink threshold <output id="threshold-value">150</output
+              ><input
+                id="panel-threshold"
+                type="range"
+                min="0"
+                max="255"
+                value="150" /></label
+            ><label class="check"
+              ><input type="checkbox" id="panel-mask" /> Preview black / white
+              mask</label
+            ><label
+              >Click tool<select id="panel-tool">
+                <option value="inspect">Inspect cell</option>
+                <option value="open">Mark walkable</option>
+                <option value="blocked">Mark blocked</option>
+                <option value="wall">Mark wall</option>
+                <option value="object">Mark object</option>
+                <option value="item">Mark item</option>
+                <option value="connector">Add connector</option>
+                <option value="level-marker">Add feature</option>
+                <option value="feature-select">Select feature</option>
+                <option value="move-feature">Move selected feature</option>
+                <option value="erase">Erase cell annotation</option>
+              </select></label
+            >
+            <button id="export-panels" class="primary full">
+              Export panel draft ↓</button
+            ><label class="file-button secondary" role="button" tabindex="0"
+              >Import panel draft<input
+                type="file"
+                id="import-panels"
+                accept="application/json,.json"
+            /></label>
+            <button id="export-cell-crops" class="secondary full">
+              Export marked cell artwork ↓
+            </button>
+            <p class="muted">
+              Cell tags: ○ walkable · × blocked · ▥ wall · O object · ◆ item.
+              Object/item tags need separate navigation review. Artwork exports
+              use exact diamond cuts without editor overlays.
+            </p>
+            <p id="panel-artifact-download" class="muted"></p>
+            <p id="panel-feedback" role="status" class="muted"></p>
+          </aside>
+          <section>
+            <section class="feature-toolbar" aria-label="Panel feature tools">
+              <h3>Panel features</h3>
+              <div class="feature-actions">
+                <label
+                  >Feature type<select id="level-marker-kind"></select
+                ></label>
+                <button id="feature-add" aria-pressed="false">
+                  Add feature
+                </button>
+                <button id="feature-select" aria-pressed="false">
+                  Select feature
+                </button>
+                <button id="feature-list">Feature list</button>
+              </div>
+              <p id="feature-status" role="status">
+                Add or open a panel to place features.
+              </p>
+              <p class="muted">
+                These markers define stairs, pits, landings and transport. The
+                scanned drawing stays intact; mark walkable or blocked cells
+                separately.
+              </p>
+            </section>
+            <div class="panel-view-options">
+              <label class="check"
+                ><input type="checkbox" id="show-panel-grid" checked /> Show
+                grid overlay</label
+              >
+              <label class="check"
+                ><input type="checkbox" id="show-panel-cells" checked /> Show
+                cell tags</label
+              >
+            </div>
+            <div class="panel-top">
+              ↑ TOP — KEEP THIS EDGE UP ON EVERY PANEL
+            </div>
+            <div class="panel-canvas-wrap">
+              <canvas
+                id="panel-canvas"
+                aria-label="Scanned panel with isometric alignment grid"
+              ></canvas>
+              <div id="panel-empty">
+                <h2>Your ink. Your underworld.</h2>
+                <p>
+                  Add an 8 × 8 inch scan, cropped to the panel edges, TOP up.
+                </p>
+              </div>
+            </div>
+            <div class="panel-foot">
+              <span>TOP ↑ · 2:1 grid · horizontal and vertical seams match</span
+              ><span>Layout draft · separate from adventure gameplay</span>
+            </div>
+            <div class="connection-heading">
+              <h3>Passages on this level</h3>
+              <span class="muted"
+                >Mark a connector, then link it to another panel’s
+                connector.</span
+              >
+            </div>
+            <div id="panel-connections"></div>
+            <div class="connection-heading">
+              <h3 id="panel-features-heading">
+                Feature list · stairs, pits and transport
+              </h3>
+              <p class="muted">
+                Mark stairs, pits, arrival points, or magical transport. Fixed
+                links are one-way; add a return stair separately. Put up and
+                down markers on the same cell for a staircase serving both
+                directions.
+              </p>
+            </div>
+            <div id="panel-level-connections"></div>
+            <details id="cell-crop-results" hidden>
+              <summary>Cell artwork preview — first 24 cuts</summary>
+              <p class="muted">
+                50 × 25 pixel diamond crops, with transparent corners. Full
+                export includes every marked cell. These are ground-plane cuts
+                of the visible illustration; a tall object may span several
+                cuts.
+              </p>
+              <div id="cell-crop-preview"></div>
+            </details>
+            <p class="muted panel-caveat">
+              Thresholding is a visual preview. White cells still need review:
+              grid lines, hatching, and drawn fixtures can look like walls. The
+              future importer will keep artwork, walkability, and room contents
+              separate.
+            </p>
+          </section>
+        </div>
+      </div>
+    </main>
+    <dialog id="book-dialog">
+      <div class="dialog-heading">
+        <h2 id="dialog-title"></h2>
+        <button id="close-dialog" aria-label="Close dialog">×</button>
+      </div>
+      <div id="dialog-content"></div>
+    </dialog>
+    <div id="toast" role="status" hidden></div>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "name": "heavy-earth-ui",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test game/tests/*.test.js"
+  }
+}

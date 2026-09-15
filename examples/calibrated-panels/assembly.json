@@ -1,0 +1,161 @@
+{
+  "format": "heavy-earth-sample-assembly",
+  "version": 1,
+  "level": 1,
+  "boardPixels": 800,
+  "assemblyInches": [
+    16,
+    16
+  ],
+  "panels": [
+    {
+      "id": "01-entrance-hall",
+      "assembly": [
+        0,
+        0
+      ],
+      "gridOffset": [
+        0,
+        0
+      ],
+      "ports": [
+        {
+          "id": "hall-east",
+          "edge": "east",
+          "span": [
+            300,
+            350
+          ],
+          "x": 29,
+          "y": -3,
+          "direction": "east",
+          "target": "shrine-west"
+        },
+        {
+          "id": "hall-south",
+          "edge": "south",
+          "span": [
+            300,
+            400
+          ],
+          "x": 38,
+          "y": 25,
+          "direction": "south",
+          "target": "cistern-north"
+        }
+      ]
+    },
+    {
+      "id": "02-silent-shrine",
+      "assembly": [
+        1,
+        0
+      ],
+      "gridOffset": [
+        16,
+        -16
+      ],
+      "ports": [
+        {
+          "id": "shrine-west",
+          "edge": "west",
+          "span": [
+            300,
+            350
+          ],
+          "x": 13,
+          "y": 13,
+          "direction": "west",
+          "target": "hall-east"
+        },
+        {
+          "id": "shrine-south",
+          "edge": "south",
+          "span": [
+            500,
+            600
+          ],
+          "x": 42,
+          "y": 21,
+          "direction": "south",
+          "target": "ossuary-north"
+        }
+      ]
+    },
+    {
+      "id": "03-dry-cistern",
+      "assembly": [
+        0,
+        1
+      ],
+      "gridOffset": [
+        32,
+        32
+      ],
+      "ports": [
+        {
+          "id": "cistern-north",
+          "edge": "north",
+          "span": [
+            300,
+            400
+          ],
+          "x": 6,
+          "y": -7,
+          "direction": "north",
+          "target": "hall-south"
+        },
+        {
+          "id": "cistern-east",
+          "edge": "east",
+          "span": [
+            500,
+            550
+          ],
+          "x": 37,
+          "y": 5,
+          "direction": "east",
+          "target": "ossuary-west"
+        }
+      ]
+    },
+    {
+      "id": "04-ossuary",
+      "assembly": [
+        1,
+        1
+      ],
+      "gridOffset": [
+        48,
+        16
+      ],
+      "ports": [
+        {
+          "id": "ossuary-north",
+          "edge": "north",
+          "span": [
+            500,
+            600
+          ],
+          "x": 10,
+          "y": -11,
+          "direction": "north",
+          "target": "shrine-south"
+        },
+        {
+          "id": "ossuary-west",
+          "edge": "west",
+          "span": [
+            500,
+            550
+          ],
+          "x": 21,
+          "y": 21,
+          "direction": "west",
+          "target": "cistern-east"
+        }
+      ]
+    }
+  ],
+  "note": "Spans are distances along each physical edge in 800-unit coordinates. Reciprocal endpoints represent the same split diamond. TOP stays up. Passages are certified for this arrangement, not arbitrary permutations."
+}
