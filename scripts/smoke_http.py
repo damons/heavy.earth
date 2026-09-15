@@ -33,7 +33,7 @@ with tempfile.TemporaryDirectory(prefix='heavy-earth-http-') as directory:
     proc,base=launch(directory)
     try:
         assert request(base,'/api/state')[1]['phase']=='Title'
-        for route in ['/', '/app.js','/renderer.js','/panels.js','/panel-overview.js','/panel-playtest.js','/style.css','/brand.png','/grid.js','/panel-grid.svg','/panel-template.pdf']:
+        for route in ['/', '/app.js','/renderer.js','/panels.js','/panel-overview.js','/panel-playtest.js','/dungeon-library.js','/style.css','/brand.png','/grid.js','/panel-grid.svg','/panel-template.pdf']:
             assert request(base,route)[0]==200, route
         assert request(base,'/api/roll',{'name':'Smoke','class':'cleric','dungeon':'telengard'})[0]==200
         status,state=request(base,'/api/begin',{})
@@ -49,15 +49,35 @@ with tempfile.TemporaryDirectory(prefix='heavy-earth-http-') as directory:
         assert request(base,'/api/map?level=2')[1]['rooms']==[]
         assert request(base,'/api/resume',{'id':'../../escape'})[0]==400
         assert request(base,'/api/saves')[1][0]['name']=='Smoke'
+        # Workshop projects are durable and isolated from adventure state.
+        draft=json.loads((ROOT/'examples/calibrated-panels/stacked-levels-draft.json').read_text())
+        status,first=request(base,'/api/dungeons/save',{'name':'Stacked example','draft':draft})
+        assert status==200 and first['panels']==6 and first['levels']==4
+        dungeon_id=first['id']
+        empty={**draft,'panels':[]}
+        status,second=request(base,'/api/dungeons/save',{'name':'Empty dungeon','draft':empty})
+        assert status==200 and second['id']!=dungeon_id
+        body={'id':dungeon_id,'revision':first['revision'],'name':'Renamed dungeon','draft':draft}
+        status,updated=request(base,'/api/dungeons/save',body)
+        assert status==200 and updated['revision']==2
+        assert request(base,'/api/dungeons/save',body)[0]==400
+        assert request(base,'/api/dungeons/save',body,{'Origin':'https://example.com'})[0]==403
+        assert request(base,'/api/dungeons/../../escape')[0]==400
+        loaded=request(base,'/api/dungeons/'+dungeon_id)[1]
+        assert loaded['draft']==draft and loaded['name']=='Renamed dungeon'
+        assert len(request(base,'/api/dungeons')[1]['dungeons'])==2
+        assert request(base,'/api/state')[1]==state
         snapshot=state
     finally:
         proc.terminate();proc.wait(timeout=5)
     proc,base=launch(directory)
     try:
+        assert request(base,'/api/dungeons/'+dungeon_id)[1]==loaded
+        assert len(request(base,'/api/dungeons')[1]['dungeons'])==2
         status,resumed=request(base,'/api/resume',{'id':save_id})
         assert status==200
         for key in ['player','position','phase','map','log','turns']:
             assert resumed[key]==snapshot[key], key
     finally:
         proc.terminate();proc.wait(timeout=5)
-print('HTTP smoke passed: assets, creation, actions, stale tabs, local-origin checks, journals, and restart/resume.')
+print('HTTP smoke passed: assets, creation, actions, stale tabs, local-origin checks, journals, dungeon persistence/conflicts, and restart/resume.')

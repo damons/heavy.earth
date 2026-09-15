@@ -1,4 +1,5 @@
 use heavy_earth::{
+    dungeons::{DungeonLibrary, MAX_BYTES},
     session::{Session, save_directory},
     view,
 };
@@ -69,6 +70,7 @@ fn run() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
             eprintln!("Open {url} in a browser ({e})");
         }
     }
+    let library = DungeonLibrary::new(directory.join("dungeons"));
     let mut session = Session::new(directory);
     for mut req in server.incoming_requests() {
         let get_header = |name: &'static str| {
@@ -101,17 +103,32 @@ fn run() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
                 );
                 continue;
             }
+            let limit = if route == "/api/dungeons/save" {
+                MAX_BYTES
+            } else {
+                4096
+            };
             let mut body = Vec::new();
-            if req.body_length().is_some_and(|n| n > 4096)
-                || req.as_reader().take(4097).read_to_end(&mut body).is_err()
-                || body.len() > 4096
+            if req.body_length().is_some_and(|n| n > limit)
+                || req
+                    .as_reader()
+                    .take((limit + 1) as u64)
+                    .read_to_end(&mut body)
+                    .is_err()
+                || body.len() > limit
             {
                 send(req, 413, "text/plain", b"Request too large".to_vec());
                 continue;
             }
             let result = serde_json::from_slice::<Value>(&body)
                 .map_err(|e| e.to_string())
-                .and_then(|v| session.route(&route, &v));
+                .and_then(|v| {
+                    if route == "/api/dungeons/save" {
+                        library.save(&v)
+                    } else {
+                        session.route(&route, &v)
+                    }
+                });
             json_response(req, result);
             continue;
         }
@@ -120,6 +137,10 @@ fn run() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
             continue;
         }
         match route.as_str() {
+            "/api/dungeons" => json_response(req, library.list()),
+            path if path.starts_with("/api/dungeons/") => {
+                json_response(req, library.read(&path[14..]))
+            }
             "/api/state" => json_response(req, Ok(session.state())),
             "/api/saves" => json_response(req, session.list()),
             path if path.starts_with("/api/map?level=") => {
@@ -191,6 +212,12 @@ fn run() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
                 200,
                 "text/javascript",
                 include_bytes!("../web/panel-overview.js").to_vec(),
+            ),
+            "/dungeon-library.js" => send(
+                req,
+                200,
+                "text/javascript",
+                include_bytes!("../web/dungeon-library.js").to_vec(),
             ),
             "/panels.js" => send(
                 req,

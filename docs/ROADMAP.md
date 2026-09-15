@@ -19,6 +19,7 @@ The intended source medium is pen and ink / scratch art on Ampersand Claybord pa
 
 ## 2. Establish the art-panel workflow — initial skeleton implemented
 
+- Named dungeon library with creation, independent copies, local autosave, switching and portable import/export.
 - Local square-scan upload and grayscale preview.
 - Locked 8-inch HE8 dimensions, 2:1 projection, grid pitch, corner origin, and TOP orientation.
 - Print-at-100% PDF and exact-size SVG templates, with scale checks and a four-panel seam illustration.
@@ -39,7 +40,7 @@ Still needed before this becomes a production authoring tool:
 - Scanner registration targets and automatic alignment to the fixed grid (the measured grid master is implemented).
 - High-resolution originals, nondestructive crop/deskew, image rotation and perspective correction; distinguish scanning resolution from in-world scale.
 - Drag-to-arrange panels in the overview; current assembly positions are edited numerically.
-- Undo/redo, draft autosave, project asset storage, panel replacement/removal, and export validation reports.
+- Undo/redo, panel replacement/removal, richer project asset management, and export validation reports.
 - Full fixture identities, multi-cell object footprints, spawn authoring and independent passability; cell category tags and travel markers are implemented.
 - Full-resolution cutting, isolated sprites, hidden-floor reconstruction, multiple elevation layers within one physical scan, and configurable custom-world transition rules.
 

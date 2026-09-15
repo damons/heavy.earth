@@ -50,13 +50,13 @@ DND’s original checkout and saves are unchanged. To bring an existing Rust cha
 
 The **Panel workshop** tab is the beginning of the hand-drawn map pipeline:
 
-1. Add a square PNG, JPEG, or WebP scan, up to 8 MB.
+1. Choose **New dungeon**, enter a name, and add a square PNG, JPEG, or WebP scan, up to 8 MB.
 2. Use an **8 × 8 inch** board with its marked **TOP up**.
 3. Draw from the shared HE8 template: **½ × ¼ inch diamonds, exact 2:1 slope, top-left origin**. Crop the scan to the board edges and compare it to the fixed overlay.
 4. Preview a black/white threshold and inspect sampled pixels.
 5. Mark reviewed cells as walkable or blocked.
 6. Add passage endpoints between panels on the same level. Assign dungeon levels and mark stairs, pits, landings, local steps, elevators, and magical transport separately.
-7. Record each panel’s assembly coordinates and export a version-3 JSON draft; import it to continue later. Mark walls, objects, and items, then export exact diamond cuts using **Export marked cell artwork**.
+7. Record each panel’s assembly coordinates. Changes autosave to the active dungeon; choose a saved dungeon and **Open dungeon** to switch. Mark walls, objects, and items, then export exact diamond cuts using **Export marked cell artwork**.
 
 Try [the synthetic two-panel draft](examples/two-panel-draft.json) using **Import panel draft**, or the [synthetic scan](game/tests/fixtures/panel-scan.png) using **Add scanned panel**. These are calibration fixtures, not hand-drawn art or playable dungeon maps.
 
@@ -64,7 +64,7 @@ For exact geometry and artwork-slicing tests, use the [four calibrated, grid-fir
 
 The earlier [four original ink dungeon panels](examples/ink-panels/README.md)—entrance hall, shrine, cistern, and ossuary—remain visual references. The pack includes PNGs and an importable draft. These AI-generated drawings require grid alignment review; they are not exact calibration fixtures or playable maps.
 
-The workshop works locally in the browser and sends no artwork to the Rust server. It exports 800 × 800 grayscale preview images inside the draft. **Keep original high-resolution scans separately.** Drafts are not autosaved; export before closing. Imports merge into the current workshop and reject duplicate IDs.
+The workshop saves named dungeons through the local Rust server into **`saves/dungeons/`** (or `dungeons/` inside a custom `--saves` directory). Each dungeon contains its 800 × 800 preview artwork, cells, levels and links. **Keep original high-resolution scans separately.** Wait for **Saved locally** before closing. **Import panel draft** adds panels to the active dungeon; **Import dungeon** creates a separate dungeon from a dungeon export or existing panel draft. **Export dungeon** creates a portable named backup; **Save as new dungeon** makes an independent copy. The current prototype supports 16 panels and 40 MB per dungeon. Stale-tab writes are rejected, with local edits retained. See [dungeon library workflow](docs/DUNGEONS.md).
 
 **Use Play-test draft to walk custom panels and test fixed stairs/pits.** This workshop layout test has no combat, encounters, item effects, fog of war, or adventure saves. Full custom-world gameplay is still planned. Thresholding is a preview, not an automatic navigation classifier. Grid lines, hatching, shadows, and furniture must be distinguished from solid earth before maps enter gameplay. Every conforming HE8 panel’s grid matches any other panel on all four sides. Actual scan alignment still needs review. Earlier version-1 drafts and drafts using 1-inch diamonds are rejected rather than silently reinterpreted.
 
@@ -80,6 +80,8 @@ See the [roadmap](docs/ROADMAP.md) and [panel format / art specification](docs/P
 | `game/web/grid.js` | Shared game/panel/print projection and fixed HE8 physical dimensions |
 | `game/web/renderer.js` | Canvas projection, picking, grayscale geometry, sprite registration seam |
 | `game/web/app.js` | Character creation, controls, context actions, spellbook, journal |
+| `game/src/dungeons.rs` | Atomic local dungeon persistence and revision checks |
+| `game/web/dungeon-library.js` | Dungeon creation, switching, autosave and portable backups |
 | `game/web/panels.js` | Scan calibration, reviewed cells, passage links, draft import/export |
 | `vendor/dnd/` | **Unmodified** snapshot of the existing DND Rust repository |
 | `vendor/dnd-provenance.json` | Source commit and SHA-256 hashes for all 56 snapshot files |

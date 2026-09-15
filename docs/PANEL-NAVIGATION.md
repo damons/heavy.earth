@@ -60,7 +60,7 @@ See [calibrated panels](../examples/calibrated-panels/README.md) for an importab
 
 ## Overall map and stacked levels
 
-The workshop has three views:
+Each dungeon has three authoring views plus Play-test draft:
 
 - **Panel** edits one scan's cells, passages, level markers, and placement.
 - **Level map** joins all panels on the selected dungeon level without gutters, using their Assembly X/Y coordinates. Select a floor with **View level**. Click a panel and choose **Edit selected panel** to annotate or move it.
@@ -76,7 +76,7 @@ To add a level, upload a panel in **Panel** view and set its **Dungeon level** a
 
 The [six-panel stack example](../examples/calibrated-panels/stacked-levels-draft.json) demonstrates the surface plus three dungeon levels, aligned slots, paired stairs, a one-way pit, game-controlled transport and an unassigned elevator. Import it into an empty workshop; it reuses the sample artwork to demonstrate topology and is not a complete playable dungeon. Regenerate it with `node scripts/generate_stack_example.mjs` after regenerating the calibrated illustrations.
 
-Views and selection do not change draft contents. **Export panel draft** saves the whole draft from either an overview or the editor. Export before refreshing; workshop drafts remain in browser memory until downloaded.
+Views and selection do not change draft contents. **Export panel draft** saves the whole draft from either an overview or the editor. Dungeons autosave locally; wait for the saved status before refreshing. Use **Export dungeon** for a named portable backup. See [the dungeon library](DUNGEONS.md).
 
 
 ## Play-test a draft
@@ -85,7 +85,7 @@ Views and selection do not change draft contents. **Export panel draft** saves t
 2. Choose **Play-test draft**. The temporary player starts on a safe marked cell in the selected panel. **Start panel** changes the starting panel and resets the step count.
 3. Move with **W/A/X/D**, arrow keys, directional buttons, or by clicking an adjacent diamond. N/E/S/W follow the same isometric directions as the adventure view.
 4. On stairs, press **U** to go up or **J** to go down; matching buttons also appear. Entering a linked pit drops you automatically to its landing. **Place player** lets you click a safe cell for a targeted test; **Center player** brings it back into view.
-5. Choose **Panel**, **Level map**, or **Level stack** to leave the test. Re-entering starts a fresh test from the current draft. Export the draft before refreshing the page.
+5. Choose **Panel**, **Level map**, or **Level stack** to leave the test. Re-entering starts a fresh test from the current draft. Wait for the dungeon’s saved status before refreshing the page.
 
 For a quick stacked example, choose **Surface gate** under Start panel and press **J** twice to descend through Entrance Hall to Dry Cistern. Press **U** twice to return. To test the one-way pit, start in **Silent Shrine**, move east five times (**D**) and south four times (**X**).
 
@@ -93,4 +93,4 @@ The runner uses reviewed cell tags: walkable and item cells allow movement; obje
 
 A panel seam requires an aligned reciprocal passage and matching walkable openings. You can cross the full connected opening around its marker, while other edges remain blocked. Level travel follows explicit directed links, checks the destination level, and rejects blocked or missing landings. Game-governed transporters and unassigned destinations report a message without moving the player.
 
-The test owns a temporary copy of the navigation data and a graphical player marker. It does not change draft cells, art, links, adventure state, or save files. It is a layout walkthrough: combat, encounters, item effects, fog of war, sprite occlusion and custom-world saving remain future work. The stack fixture reuses artwork; its authored travel markers define the test routes even where a drawing depicts a different fixture.
+The test owns a temporary copy of the navigation data and a graphical player marker. It does not change draft cells, art, links, adventure state, or save files. It is a layout walkthrough: combat, encounters, item effects, fog of war, sprite occlusion and custom-world adventure saving remain future work. The stack fixture reuses artwork; its authored travel markers define the test routes even where a drawing depicts a different fixture.

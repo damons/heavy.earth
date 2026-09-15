@@ -2,12 +2,12 @@
 
 ## Automated checks
 
-- `cargo test --workspace`: **59 passing tests** — all 54 original DND tests plus 5 Heavy Earth adapter/session tests.
+- `cargo test --workspace`: **61 passing tests** — all 54 original DND tests plus 5 Heavy Earth adapter/session tests and 2 dungeon storage tests.
 - Adapter coverage: 240 dungeon/position/light combinations; stable render snapshots and unchanged RNG; hidden secret-door masking; separate live/journal visibility; direct-engine command and save equivalence; resume; failed-save rollback; stale revision rejection; distinct new-character saves and invalid save IDs.
 - `cargo clippy --workspace --all-targets -- -D warnings`: passed.
 - `cargo fmt --all --check`: passed.
 - `cargo build --release --locked`: passed on macOS with Rust 1.95.
-- `npm test`: **28 passing tests** — 6,400 projection/inverse tile-picking checks, 625 arbitrary board positions, panel permutations, exact SVG seam crossings on all four edges, fixed-standard/legacy rejection, reciprocal links, malformed drafts, and the HE8 example project.
+- `npm test`: **32 passing tests** — 6,400 projection/inverse tile-picking checks, 625 arbitrary board positions, panel permutations, exact SVG seam crossings on all four edges, fixed-standard/legacy rejection, reciprocal links, malformed drafts, and the HE8 example project.
 - Half-inch grid update: 0.5 × 0.25 inch diamonds; 16 horizontal and 32 vertical repeats per board. SVG checks cover all 94 lines, with 62 interior endpoints on each vertical edge and 30 on each horizontal edge. Coarse 1-inch drafts are explicitly rejected.
 - Grid-first samples: every SVG floor polygon and sidecar polygon matches `cellPolygon`; 2,860 crop positions verify exact size, center, area and slopes. Version-3 tests cover nonmutating v2 upgrade, per-level slots, directed stair/pit links, invalid targets, transport modes and same-level passage constraints.
 - PDF checks: two US Letter pages; the tracing square is exactly 576 × 576 points (8 × 8 inches); both pages rendered and visually inspected. The PDF/SVG and fixture generator reads the shared grid module.
@@ -66,6 +66,13 @@ Checked the local game in the Codex browser:
 - All 28 JavaScript tests pass. The runner reaches all 953 walkable world cells of the four-panel fixture and crosses all four seams in both directions. Tests cover blocking, item-cell traversal, placement, restart, unlinked/offset seams, stairs to and from the surface and lower floors, one-way pits, unsafe landings, missing destinations, game-controlled transport and unchanged source drafts.
 - Browser checked: empty draft, stacked import, player display, keyboard and click movement, stair descent/return, automatic pit drop, manual placement and zoom.
 - Debug/release builds, HTTP smoke (including the play-test module) and the 56-file engine hash verification pass.
+
+## Dungeon library
+
+- Added independent named dungeons with local disk persistence, autosave, safe switching, separate copies and portable imports/exports. Empty HE8 drafts are supported.
+- 32 JavaScript tests cover draft geometry and traversal plus autosave edits during an in-flight write, failed/stale saves, copy recovery and save-before-switch ordering.
+- Rust storage tests cover independent projects, restart, revisions, invalid paths/envelopes and preservation of unreadable files. HTTP smoke saves/reopens a six-panel stack, creates an empty dungeon, checks conflicts and same-origin enforcement, restarts the server, and verifies that workshop operations leave adventure state unchanged.
+- Browser checked: create and name two dungeons, import six stacked panels, add two scanned panels to the other dungeon, link reciprocal passages, save/reload and restore those links, switch back, and traverse the saved stairs. Importing a portable dungeon creates a third independent project with identical panel data, preserving both existing dungeons. The main server update preserved adventure state and all character-save hashes.
 
 ## Limits
 

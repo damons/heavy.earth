@@ -340,6 +340,7 @@ export class PanelPlaytest {
   key(e) {
     if (
       !this.active ||
+      this.workshop.library?.busy ||
       $("panel-screen").hidden ||
       e.ctrlKey ||
       e.metaKey ||

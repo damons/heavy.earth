@@ -1,3 +1,4 @@
+import { DungeonLibrary } from "./dungeon-library.js";
 import { PanelPlaytest } from "./panel-playtest.js";
 import { PanelOverview } from "./panel-overview.js";
 import {
@@ -107,11 +108,10 @@ export function validateDraft(d) {
     d.projection?.tileWidthInches !== PANEL.tileWidthInches ||
     d.projection?.previewPixels !== SIZE ||
     !Array.isArray(d.panels) ||
-    !d.panels.length ||
     d.panels.length > MAX_PANELS
   )
     throw Error(
-      "Unsupported panel draft. Expected version 2 or 3, the fixed HE8 grid, and 1–16 panels.",
+      "Unsupported panel draft. Expected version 2 or 3, the fixed HE8 grid, and 0–16 panels.",
     );
   const ids = new Set(),
     connectors = new Set(),
@@ -320,7 +320,8 @@ export class PanelWorkshop {
     this.canvas = $("panel-canvas");
     this.canvas.width = SIZE;
     this.canvas.height = SIZE;
-    $("panel-upload").onchange = (e) => this.upload(e.target.files[0]);
+    $("panel-upload").onchange = (e) =>
+      this.library.run(() => this.upload(e.target.files[0]));
     $("panel-select").onchange = () => {
       this.selected = $("panel-select").value;
       $("cell-crop-results").hidden = true;
@@ -364,13 +365,62 @@ export class PanelWorkshop {
     );
     $("export-panels").onclick = () => this.export();
     $("export-cell-crops").onclick = () => this.exportCellCrops();
-    $("import-panels").onchange = (e) => this.import(e.target.files[0]);
+    $("import-panels").onchange = (e) =>
+      this.library.run(() => this.import(e.target.files[0]));
+    this.library = new DungeonLibrary(this);
     window.addEventListener("beforeunload", (e) => {
       if (this.dirty) {
         e.preventDefault();
         e.returnValue = "";
       }
     });
+  }
+  get dirty() {
+    return this.library?.pending || this._dirty || false;
+  }
+  set dirty(value) {
+    this._dirty = value;
+    if (value) this.library?.changed();
+  }
+  emptyDraft() {
+    return {
+      format: "heavy-earth-panel-draft",
+      version: 3,
+      projection: DRAFT_PROJECTION,
+      panels: [],
+    };
+  }
+  draft() {
+    return { ...this.emptyDraft(), panels: this.panels };
+  }
+  validate(draft) {
+    validateDraft(draft);
+  }
+  async prepareDraft(data) {
+    const draft = upgradeDraft(data),
+      images = new Map();
+    for (const p of draft.panels) {
+      const image = await loadImage(p.art);
+      if (image.width !== SIZE || image.height !== SIZE)
+        throw Error("Draft preview art must be 800 × 800 pixels.");
+      images.set(p.id, image);
+    }
+    return { draft, images };
+  }
+  replaceDraft({ draft, images }) {
+    this.panels = draft.panels;
+    this.images = images;
+    this.selected = this.panels[0]?.id ?? null;
+    this._dirty = false;
+    $("cell-crop-results").hidden = true;
+    $("panel-artifact-download").replaceChildren();
+    $("dungeon-artifact-download").replaceChildren();
+    if (this.downloadUrl) {
+      URL.revokeObjectURL(this.downloadUrl);
+      this.downloadUrl = null;
+    }
+    this.controls();
+    this.setView("panel");
   }
   setView(mode) {
     this.viewMode = mode;
@@ -468,7 +518,12 @@ export class PanelWorkshop {
       }),
     );
     $("panel-select").value = this.selected || "";
-    if (!p) return;
+    if (!p) {
+      $("panel-name").value = "";
+      $("panel-connections").replaceChildren();
+      $("panel-level-connections").replaceChildren();
+      return;
+    }
     for (const [id, value] of Object.entries({
       "panel-name": p.name,
       "panel-level": p.level,
@@ -804,6 +859,7 @@ export class PanelWorkshop {
     a.download = filename;
     a.textContent = label;
     $("panel-artifact-download").replaceChildren(a);
+    $("dungeon-artifact-download").replaceChildren(a.cloneNode(true));
     a.click();
   }
   exportCellCrops() {
@@ -1008,12 +1064,12 @@ export class PanelWorkshop {
         d.panels.some((p) => this.panels.some((q) => q.id === p.id))
       )
         throw Error(
-          "Draft overlaps loaded panel IDs or exceeds 16 panels. Reload the workshop to replace its contents.",
+          "Draft overlaps loaded panel IDs or exceeds 16 panels. Use Import dungeon to create a separate dungeon.",
         );
       validateDraft({ ...d, panels: [...this.panels, ...d.panels] });
       this.panels.push(...d.panels);
       for (const [id, img] of images) this.images.set(id, img);
-      this.selected = d.panels[0].id;
+      this.selected = d.panels[0]?.id ?? this.selected;
       this.dirty = true;
       this.controls();
       this.draw();
