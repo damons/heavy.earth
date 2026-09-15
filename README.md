@@ -60,6 +60,8 @@ The **Panel workshop** tab is the beginning of the hand-drawn map pipeline:
 
 Try [the synthetic two-panel draft](examples/two-panel-draft.json) using **Import panel draft**, or the [synthetic scan](game/tests/fixtures/panel-scan.png) using **Add scanned panel**. These are calibration fixtures, not hand-drawn art or playable dungeon maps.
 
+For richer scan tests, try the [four original ink dungeon panels](examples/ink-panels/README.md): entrance hall, shrine, cistern, and ossuary. The pack includes PNGs and an importable draft. These AI-generated drawings require grid alignment review; they are not exact calibration fixtures or playable maps.
+
 The workshop works locally in the browser and sends no artwork to the Rust server. It exports 800 × 800 grayscale preview images inside the draft. **Keep original high-resolution scans separately.** Drafts are not autosaved; export before closing. Imports merge into the current workshop and reject duplicate IDs.
 
 **Custom panels are not playable yet.** Thresholding is a preview, not an automatic navigation classifier. Grid lines, hatching, shadows, and furniture must be distinguished from solid earth before maps enter gameplay. Every conforming HE8 panel’s grid matches any other panel on all four sides. Actual scan alignment still needs review. Earlier version-1 drafts and drafts using 1-inch diamonds are rejected rather than silently reinterpreted.
