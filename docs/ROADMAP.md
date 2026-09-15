@@ -28,6 +28,8 @@ The intended source medium is pen and ink / scratch art on Ampersand Claybord pa
 - Named panels, per-level assembly coordinates, same-level passages, and typed level-navigation markers.
 - Stairs up/down, one-way pits/landings, local steps, elevators, and engine-governed transport markers; explicit adjacent-level destinations.
 - Grid-first vector sample panels with exact floor polygons; wall/object/item cell tags and transparent diamond artwork cuts.
+- Level map and schematic level stack with shared assembly coordinates and explicit routes.
+- Workshop play-test: temporary player, marked-cell movement, aligned panel crossings, directed stairs/pits, and blocked-route diagnostics.
 - Reciprocal passage links; portable version-3 JSON export/import with preview art and compatible v2 upgrade.
 
 Still needed before this becomes a production authoring tool:
@@ -36,7 +38,7 @@ Still needed before this becomes a production authoring tool:
 - Register existing artwork to HE8 without silently reinterpreting old geometry.
 - Scanner registration targets and automatic alignment to the fixed grid (the measured grid master is implemented).
 - High-resolution originals, nondestructive crop/deskew, image rotation and perspective correction; distinguish scanning resolution from in-world scale.
-- A visual overview for arranging an entire mosaic of physical panels.
+- Drag-to-arrange panels in the overview; current assembly positions are edited numerically.
 - Undo/redo, draft autosave, project asset storage, panel replacement/removal, and export validation reports.
 - Full fixture identities, multi-cell object footprints, spawn authoring and independent passability; cell category tags and travel markers are implemented.
 - Full-resolution cutting, isolated sprites, hidden-floor reconstruction, multiple elevation layers within one physical scan, and configurable custom-world transition rules.
@@ -54,7 +56,9 @@ Still needed before this becomes a production authoring tool:
 
 The drawing remains the visual authority. The reviewed navigation graph is the gameplay authority. Preserve the original scan unchanged, and make automatic classification reversible.
 
-## 4. Connect playable panels — planned
+## 4. Connect panels to full gameplay — planned
+
+The workshop layout walkthrough is implemented separately from the engine. The remaining work brings authored worlds into the adventure rules and persistence.
 
 - Introduce a map-provider interface that can read both legacy DND maps and reviewed panel graphs.
 - Use stable panel IDs, local cell coordinates, and explicit connectors; physical mosaic neighbors do not imply a traversable connection.

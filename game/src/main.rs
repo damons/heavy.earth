@@ -180,6 +180,12 @@ fn run() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
                 "text/javascript",
                 include_bytes!("../web/renderer.js").to_vec(),
             ),
+            "/panel-playtest.js" => send(
+                req,
+                200,
+                "text/javascript",
+                include_bytes!("../web/panel-playtest.js").to_vec(),
+            ),
             "/panel-overview.js" => send(
                 req,
                 200,

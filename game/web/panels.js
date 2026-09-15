@@ -1,3 +1,4 @@
+import { PanelPlaytest } from "./panel-playtest.js";
 import { PanelOverview } from "./panel-overview.js";
 import {
   project,
@@ -304,7 +305,12 @@ export class PanelWorkshop {
       },
       edit: () => this.setView("panel"),
     });
-    for (const mode of ["panel", "level", "stack"])
+    this.playtest = new PanelPlaytest(this);
+    this.overview.cellClick = (id, point) => this.playtest.click(id, point);
+    this.overview.handleKey = (e) => this.playtest.key(e);
+    this.overview.afterRender = () => this.playtest.draw();
+    this.overview.afterView = () => this.playtest.draw();
+    for (const mode of ["panel", "level", "stack", "test"])
       $("workshop-view-" + mode).onclick = () => this.setView(mode);
     $("overview-add").onclick = () => this.setView("panel");
     $("overview-export").onclick = () => this.export();
@@ -370,12 +376,17 @@ export class PanelWorkshop {
     this.viewMode = mode;
     $("panel-detail-layout").hidden = mode !== "panel";
     $("panel-overview").hidden = mode === "panel";
-    for (const name of ["panel", "level", "stack"]) {
+    $("playtest-controls").hidden = mode !== "test";
+    $("overview-panel-list").hidden = mode === "test";
+    $("overview-click-help").hidden = mode === "test";
+    this.overview.testing = mode === "test";
+    for (const name of ["panel", "level", "stack", "test"]) {
       const b = $("workshop-view-" + name);
       b.classList.toggle("active", name === mode);
       b.setAttribute("aria-pressed", String(name === mode));
     }
-    this.draw();
+    if (mode === "test") this.playtest.begin();
+    else this.draw();
   }
   nextSlot() {
     let column = 0;
@@ -509,7 +520,11 @@ export class PanelWorkshop {
   }
   draw() {
     if (this.viewMode !== "panel")
-      this.overview.sync(this.panels, this.selected, this.viewMode);
+      this.overview.sync(
+        this.panels,
+        this.selected,
+        this.viewMode === "test" ? "level" : this.viewMode,
+      );
     const p = this.panel,
       c = this.canvas.getContext("2d");
     c.clearRect(0, 0, SIZE, SIZE);

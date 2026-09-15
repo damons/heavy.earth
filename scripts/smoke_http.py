@@ -33,7 +33,7 @@ with tempfile.TemporaryDirectory(prefix='heavy-earth-http-') as directory:
     proc,base=launch(directory)
     try:
         assert request(base,'/api/state')[1]['phase']=='Title'
-        for route in ['/', '/app.js','/renderer.js','/panels.js','/panel-overview.js','/style.css','/brand.png','/grid.js','/panel-grid.svg','/panel-template.pdf']:
+        for route in ['/', '/app.js','/renderer.js','/panels.js','/panel-overview.js','/panel-playtest.js','/style.css','/brand.png','/grid.js','/panel-grid.svg','/panel-template.pdf']:
             assert request(base,route)[0]==200, route
         assert request(base,'/api/roll',{'name':'Smoke','class':'cleric','dungeon':'telengard'})[0]==200
         status,state=request(base,'/api/begin',{})

@@ -220,8 +220,47 @@
         <button id="workshop-view-stack" aria-pressed="false">
           Level stack
         </button>
+        <button id="workshop-view-test" aria-pressed="false">
+          Play-test draft
+        </button>
       </nav>
       <section id="panel-overview" hidden aria-label="Dungeon overview">
+        <div id="playtest-controls" hidden>
+          <div class="playtest-toolbar">
+            <label
+              >Start panel<select id="playtest-start-panel"></select
+            ></label>
+            <button id="playtest-reset" class="secondary">Restart test</button>
+            <button id="playtest-place" class="secondary" aria-pressed="false">
+              Place player
+            </button>
+            <button id="playtest-center" class="secondary">
+              Center player
+            </button>
+          </div>
+          <div class="playtest-toolbar">
+            <div class="playtest-directions" aria-label="Move player">
+              <button id="playtest-north" aria-label="Move north">
+                ↗ N · W
+              </button>
+              <button id="playtest-east" aria-label="Move east">
+                ↘ E · D
+              </button>
+              <button id="playtest-west" aria-label="Move west">
+                ↖ W · A
+              </button>
+              <button id="playtest-south" aria-label="Move south">
+                ↙ S · X
+              </button>
+            </div>
+            <button id="playtest-up">Go up · U</button>
+            <button id="playtest-down">Go down · J</button>
+            <div id="playtest-actions"></div>
+          </div>
+          <p id="playtest-position"></p>
+          <p id="playtest-status" role="status"></p>
+          <p id="playtest-click-hint" class="muted"></p>
+        </div>
         <div class="overview-toolbar">
           <label id="overview-level-label"
             >View level<select id="overview-level"></select
@@ -263,7 +302,7 @@
             Export panel draft ↓
           </button>
         </div>
-        <p class="muted">
+        <p id="overview-click-help" class="muted">
           Click a panel to select it · Drag to pan · Scroll to zoom · Fit map
           resets the view
         </p>

@@ -7,7 +7,7 @@
 - `cargo clippy --workspace --all-targets -- -D warnings`: passed.
 - `cargo fmt --all --check`: passed.
 - `cargo build --release --locked`: passed on macOS with Rust 1.95.
-- `npm test`: **21 passing tests** — 6,400 projection/inverse tile-picking checks, 625 arbitrary board positions, panel permutations, exact SVG seam crossings on all four edges, fixed-standard/legacy rejection, reciprocal links, malformed drafts, and the HE8 example project.
+- `npm test`: **28 passing tests** — 6,400 projection/inverse tile-picking checks, 625 arbitrary board positions, panel permutations, exact SVG seam crossings on all four edges, fixed-standard/legacy rejection, reciprocal links, malformed drafts, and the HE8 example project.
 - Half-inch grid update: 0.5 × 0.25 inch diamonds; 16 horizontal and 32 vertical repeats per board. SVG checks cover all 94 lines, with 62 interior endpoints on each vertical edge and 30 on each horizontal edge. Coarse 1-inch drafts are explicitly rejected.
 - Grid-first samples: every SVG floor polygon and sidecar polygon matches `cellPolygon`; 2,860 crop positions verify exact size, center, area and slopes. Version-3 tests cover nonmutating v2 upgrade, per-level slots, directed stair/pit links, invalid targets, transport modes and same-level passage constraints.
 - PDF checks: two US Letter pages; the tracing square is exactly 576 × 576 points (8 × 8 inches); both pages rendered and visually inspected. The PDF/SVG and fixture generator reads the shared grid module.
@@ -61,10 +61,16 @@ Checked the local game in the Codex browser:
 - Browser checked: empty stack, multi-level import, stacked arrows, per-level selection, zoom and fit, selecting a panel from the SVG and opening its editor, plus keyboard pan/zoom/reset. The four-panel map's downloaded draft matches the source JSON exactly after view interactions.
 - Release/debug builds, formatting, HTTP smoke (including the new module route), and engine-hash checks pass. The active adventure was resumed after server restart with identical game state and unchanged save-file hashes. The older open workshop draft was exported before updating the app.
 
+## Workshop draft play-test
+
+- All 28 JavaScript tests pass. The runner reaches all 953 walkable world cells of the four-panel fixture and crosses all four seams in both directions. Tests cover blocking, item-cell traversal, placement, restart, unlinked/offset seams, stairs to and from the surface and lower floors, one-way pits, unsafe landings, missing destinations, game-controlled transport and unchanged source drafts.
+- Browser checked: empty draft, stacked import, player display, keyboard and click movement, stair descent/return, automatic pit drop, manual placement and zoom.
+- Debug/release builds, HTTP smoke (including the play-test module) and the 56-file engine hash verification pass.
+
 ## Limits
 
 These checks establish the new interface’s integration with the current engine; they do not establish complete equivalence with the original DOS executable. The existing engine’s [fidelity notes](../vendor/dnd/docs/FIDELITY.md) still apply.
 
-The workshop was tested with synthetic fixtures. No production Claybord scan has been calibrated or classified, and no physical printer output has been measured. The fixed HE8 template guarantees digital seam alignment; real board/print/scan tolerances still need checking. It exports reviewed draft metadata and preview images, not playable custom levels. Ink classification, edge-level navigation, physical panel assembly, cross-panel gameplay, production sprite artwork, and full-resolution asset handling remain on the roadmap.
+The workshop was tested with synthetic fixtures. No production Claybord scan has been calibrated or classified, and no physical printer output has been measured. The fixed HE8 template guarantees digital seam alignment; real board/print/scan tolerances still need checking. It exports reviewed draft metadata and preview images and supports a temporary layout walkthrough. Full custom-world adventure rules, ink classification, production sprite artwork, depth occlusion, and full-resolution asset handling remain on the roadmap.
 
 Windows and Linux graphical play have not been manually checked. The launcher is a macOS `.command`; CLI startup works wherever the Rust dependencies compile and a browser can reach the loopback server. CI uses Linux and pins Rust 1.95.0 to match local validation. The initial run with Rust 1.98 passed all Rust tests but introduced a new Clippy style lint in the frozen engine; the engine was kept unchanged.

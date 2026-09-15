@@ -1,6 +1,6 @@
 # Panel levels, markers, and cell artwork
 
-The workshop records navigation intent separately from the illustration. Custom panels are still authoring drafts, not loaded into gameplay. The original Rust game rules remain unchanged.
+The workshop records navigation intent separately from the illustration. Custom panels can be walked in the workshop layout test; they are not loaded into the adventure engine. The original Rust game rules remain unchanged.
 
 ## Levels and passages
 
@@ -77,3 +77,20 @@ To add a level, upload a panel in **Panel** view and set its **Dungeon level** a
 The [six-panel stack example](../examples/calibrated-panels/stacked-levels-draft.json) demonstrates the surface plus three dungeon levels, aligned slots, paired stairs, a one-way pit, game-controlled transport and an unassigned elevator. Import it into an empty workshop; it reuses the sample artwork to demonstrate topology and is not a complete playable dungeon. Regenerate it with `node scripts/generate_stack_example.mjs` after regenerating the calibrated illustrations.
 
 Views and selection do not change draft contents. **Export panel draft** saves the whole draft from either an overview or the editor. Export before refreshing; workshop drafts remain in browser memory until downloaded.
+
+
+## Play-test a draft
+
+1. Import `examples/calibrated-panels/stacked-levels-draft.json` into an empty workshop (or use your current draft).
+2. Choose **Play-test draft**. The temporary player starts on a safe marked cell in the selected panel. **Start panel** changes the starting panel and resets the step count.
+3. Move with **W/A/X/D**, arrow keys, directional buttons, or by clicking an adjacent diamond. N/E/S/W follow the same isometric directions as the adventure view.
+4. On stairs, press **U** to go up or **J** to go down; matching buttons also appear. Entering a linked pit drops you automatically to its landing. **Place player** lets you click a safe cell for a targeted test; **Center player** brings it back into view.
+5. Choose **Panel**, **Level map**, or **Level stack** to leave the test. Re-entering starts a fresh test from the current draft. Export the draft before refreshing the page.
+
+For a quick stacked example, choose **Surface gate** under Start panel and press **J** twice to descend through Entrance Hall to Dry Cistern. Press **U** twice to return. To test the one-way pit, start in **Silent Shrine**, move east five times (**D**) and south four times (**X**).
+
+The runner uses reviewed cell tags: walkable and item cells allow movement; objects, walls, blocked and unmarked cells do not. A linked pit is an exception: entering its footprint triggers its drop even if the footprint is tagged blocked. It requires a safe, marked landing. Item cells have no pickup effects in this test.
+
+A panel seam requires an aligned reciprocal passage and matching walkable openings. You can cross the full connected opening around its marker, while other edges remain blocked. Level travel follows explicit directed links, checks the destination level, and rejects blocked or missing landings. Game-governed transporters and unassigned destinations report a message without moving the player.
+
+The test owns a temporary copy of the navigation data and a graphical player marker. It does not change draft cells, art, links, adventure state, or save files. It is a layout walkthrough: combat, encounters, item effects, fog of war, sprite occlusion and custom-world saving remain future work. The stack fixture reuses artwork; its authored travel markers define the test routes even where a drawing depicts a different fixture.

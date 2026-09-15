@@ -1330,3 +1330,57 @@ dialog::backdrop {
     height: 520px;
   }
 }
+
+/* The layout runner owns only a temporary player, never the draft or game save. */
+#playtest-controls {
+  border: 1px solid #555;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.playtest-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.playtest-toolbar label {
+  flex: 1 1 240px;
+}
+.playtest-directions {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px;
+}
+#playtest-west {
+  grid-column: 1;
+  grid-row: 1;
+}
+#playtest-north {
+  grid-column: 2;
+  grid-row: 1;
+}
+#playtest-south {
+  grid-column: 1;
+  grid-row: 2;
+}
+#playtest-east {
+  grid-column: 2;
+  grid-row: 2;
+}
+#playtest-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+#playtest-place[aria-pressed="true"] {
+  background: #eee;
+  color: #111;
+}
+#playtest-status {
+  border-left: 3px solid #aaa;
+  padding-left: 10px;
+}
+.workshop-views {
+  flex-wrap: wrap;
+}

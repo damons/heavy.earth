@@ -175,12 +175,14 @@ export class PanelOverview {
       this.drag = null;
       if (this.svg.hasPointerCapture(e.pointerId))
         this.svg.releasePointerCapture(e.pointerId);
-      if (d && !d.moved && d.id) this.select(d.id);
+      if (d && !d.moved && d.id && !this.cellClick?.(d.id, this.position(e)))
+        this.select(d.id);
     });
     this.svg.addEventListener("pointercancel", () => {
       this.drag = null;
     });
     this.svg.addEventListener("keydown", (e) => {
+      if (this.handleKey?.(e)) return;
       const step = this.view.width * 0.12;
       if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(e.key)) {
         e.preventDefault();
@@ -204,6 +206,18 @@ export class PanelOverview {
     const v = this.view;
     this.svg.setAttribute("viewBox", `${v.x} ${v.y} ${v.width} ${v.height}`);
     $("overview-zoom").textContent = `${Math.round(this.zoom * 100)}%`;
+    this.afterView?.();
+  }
+  centerOn(point, size) {
+    if (!this.view) return;
+    if (size) {
+      this.view.width = size;
+      this.view.height = size;
+      this.zoom = (this.fitWidth ?? size) / size;
+    }
+    this.view.x = point.x - this.view.width / 2;
+    this.view.y = point.y - this.view.height / 2;
+    this.applyView();
   }
   scale(f, anchor) {
     if (!this.view) return;
@@ -255,12 +269,20 @@ export class PanelOverview {
       }),
     );
     $("overview-level").value = this.level;
-    $("overview-level-label").hidden = stack;
+    $("overview-level-label").hidden = stack || this.testing;
+    this.svg.setAttribute(
+      "aria-label",
+      this.testing
+        ? "Draft play-test. Arrow keys move the player; U goes up and J goes down. Drag to pan, scroll to zoom."
+        : "Dungeon overview. Drag to pan, scroll to zoom. Arrow keys pan; plus and minus zoom; zero fits the map.",
+    );
     $("overview-empty").hidden = !!panels.length;
     this.svg.toggleAttribute("hidden", !panels.length);
-    $("overview-instructions").textContent = stack
-      ? "Levels are stacked schematically; matching X/Y slots line up. Only authored levels are shown. Arrows show fixed destinations."
-      : "Panels meet at their assembly coordinates. Solid passage markers meet at a seam; dashed links need placement review.";
+    $("overview-instructions").textContent = this.testing
+      ? "Layout test uses marked cells and fixed links. Objects, walls, and unmarked cells block movement. No combat or adventure saves."
+      : stack
+        ? "Levels are stacked schematically; matching X/Y slots line up. Only authored levels are shown. Arrows show fixed destinations."
+        : "Panels meet at their assembly coordinates. Solid passage markers meet at a seam; dashed links need placement review.";
     const selected = panels.find((p) => p.id === this.selected);
     $("overview-selection").textContent = selected
       ? `${selected.name} · level ${depth(selected)} · position (${selected.assembly.join(", ")})`
@@ -288,6 +310,7 @@ export class PanelOverview {
             : b.height) + 290,
       };
     }
+    if (fit) this.fitWidth = this.view.width;
     this.applyView();
     const defs = node("defs");
     const marker = node("marker", {
@@ -376,6 +399,7 @@ export class PanelOverview {
         ),
       );
       g.onkeydown = (e) => {
+        if (this.testing) return;
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
           e.stopPropagation();
@@ -485,6 +509,7 @@ export class PanelOverview {
       }
     }
     this.summary(shown);
+    this.afterRender?.();
   }
   summary(shown) {
     const stack = this.mode === "stack",
