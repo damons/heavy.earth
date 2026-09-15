@@ -7,7 +7,7 @@
 - `cargo clippy --workspace --all-targets -- -D warnings`: passed.
 - `cargo fmt --all --check`: passed.
 - `cargo build --release --locked`: passed on macOS with Rust 1.95.
-- `npm test`: **17 passing tests** — 6,400 projection/inverse tile-picking checks, 625 arbitrary board positions, panel permutations, exact SVG seam crossings on all four edges, fixed-standard/legacy rejection, reciprocal links, malformed drafts, and the HE8 example project.
+- `npm test`: **21 passing tests** — 6,400 projection/inverse tile-picking checks, 625 arbitrary board positions, panel permutations, exact SVG seam crossings on all four edges, fixed-standard/legacy rejection, reciprocal links, malformed drafts, and the HE8 example project.
 - Half-inch grid update: 0.5 × 0.25 inch diamonds; 16 horizontal and 32 vertical repeats per board. SVG checks cover all 94 lines, with 62 interior endpoints on each vertical edge and 30 on each horizontal edge. Coarse 1-inch drafts are explicitly rejected.
 - Grid-first samples: every SVG floor polygon and sidecar polygon matches `cellPolygon`; 2,860 crop positions verify exact size, center, area and slopes. Version-3 tests cover nonmutating v2 upgrade, per-level slots, directed stair/pit links, invalid targets, transport modes and same-level passage constraints.
 - PDF checks: two US Letter pages; the tracing square is exactly 576 × 576 points (8 × 8 inches); both pages rendered and visually inspected. The PDF/SVG and fixture generator reads the shared grid module.
@@ -52,6 +52,14 @@ Checked the local game in the Codex browser:
 - Compared each 800-pixel panel render against its corresponding assembly crop: only 5–26 raster antialias pixels differ per panel (maximum 7/255 intensity), with exact vector ground geometry unchanged by cropping. Every print image is 2400 × 2400 and strictly grayscale.
 - Browser checks: assembled grid/seam toggles, connected draft import, selected passage destinations, and refreshed export of all 359 Entrance Hall diamonds. Every crop is 50 × 25 RGBA with transparent corners.
 - The 56-file engine snapshot remains unchanged. The new samples are authoring fixtures; they are not loaded into gameplay.
+
+## Workshop overview and level stack
+
+- Added Panel / Level map / Level stack views, per-level navigation, clickable panel selection, editor handoff, zoom/pan/fit, boundary/link overlays and a destination list.
+- All 21 JavaScript tests pass. Overview tests cover reciprocal passage deduplication, actual seam positions, placement offsets, negative assembly coordinates, common stacked origins, directed stair/pit links, game-controlled destinations, missing targets, empty drafts, sparse level numbers and nonmutation of imported data.
+- Added an importable six-panel fixture across the surface and three dungeon levels, reusing sample art to exercise navigation topology.
+- Browser checked: empty stack, multi-level import, stacked arrows, per-level selection, zoom and fit, selecting a panel from the SVG and opening its editor, plus keyboard pan/zoom/reset. The four-panel map's downloaded draft matches the source JSON exactly after view interactions.
+- Release/debug builds, formatting, HTTP smoke (including the new module route), and engine-hash checks pass. The active adventure was resumed after server restart with identical game state and unchanged save-file hashes. The older open workshop draft was exported before updating the app.
 
 ## Limits
 

@@ -60,7 +60,7 @@ The **Panel workshop** tab is the beginning of the hand-drawn map pipeline:
 
 Try [the synthetic two-panel draft](examples/two-panel-draft.json) using **Import panel draft**, or the [synthetic scan](game/tests/fixtures/panel-scan.png) using **Add scanned panel**. These are calibration fixtures, not hand-drawn art or playable dungeon maps.
 
-For exact geometry and artwork-slicing tests, use the [four calibrated, grid-first panels](examples/calibrated-panels/README.md), including a connected 2 × 2 assembly with reciprocal passages, detailed ink artwork, and level-navigation markers. See [level markers and cell exports](docs/PANEL-NAVIGATION.md).
+For exact geometry and artwork-slicing tests, use the [four calibrated, grid-first panels](examples/calibrated-panels/README.md), including a connected 2 × 2 assembly with reciprocal passages, detailed ink artwork, and level-navigation markers. Use **Level map** to see joined panels on one floor and **Level stack** to see the authored floors and their stair/pit links. See [level markers and cell exports](docs/PANEL-NAVIGATION.md).
 
 The earlier [four original ink dungeon panels](examples/ink-panels/README.md)—entrance hall, shrine, cistern, and ossuary—remain visual references. The pack includes PNGs and an importable draft. These AI-generated drawings require grid alignment review; they are not exact calibration fixtures or playable maps.
 

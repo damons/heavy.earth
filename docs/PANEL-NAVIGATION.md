@@ -57,3 +57,23 @@ A marker has the form:
 `destination` is `null` (unassigned / no outgoing travel), `"engine"`, or an explicit `{ "marker": "stable-id" }`. Marker IDs must be unique across the draft. Landings and local steps require null; magical transport allows null or engine; fixed destinations must match travel direction and adjacent level. Missing targets and invalid levels are rejected.
 
 See [calibrated panels](../examples/calibrated-panels/README.md) for an importable four-board assembly with reciprocal passages and engine-governed level markers.
+
+## Overall map and stacked levels
+
+The workshop has three views:
+
+- **Panel** edits one scan's cells, passages, level markers, and placement.
+- **Level map** joins all panels on the selected dungeon level without gutters, using their Assembly X/Y coordinates. Select a floor with **View level**. Click a panel and choose **Edit selected panel** to annotate or move it.
+- **Level stack** shows every authored level in ascending order, with the surface at level 0. Each layer uses the same X/Y extent so vertically aligned panel positions line up. The stack compresses images vertically for a schematic overview; source artwork, physical calibration and exported drafts keep their original geometry.
+
+Drag to pan, scroll or use +/− to zoom, and choose **Fit map** to reset. Keyboard users can focus the map and use arrow keys, +/−, and 0; the panel buttons below the map provide another selection route. Panel boundaries and link overlays can be hidden independently.
+
+Solid passage markers identify reciprocal endpoints that coincide at a shared physical edge. Dashed links indicate connected endpoints whose positions do not meet. These checks compare connector positions; they do not infer corridor width or passability from scanned pixels. The destination list includes all visible passages and level markers.
+
+In the stack, arrows follow explicit stair/pit destinations; reciprocal stairs have arrows at both ends, and a one-way pit has one arrow. Game-controlled transport and unassigned destinations are listed without inventing a destination on the map. Only authored levels are shown, including their actual numbers if some levels are missing.
+
+To add a level, upload a panel in **Panel** view and set its **Dungeon level** and **Assembly X/Y**. Existing linked panels may need their passage/level destinations adjusted before a move is valid. A shared X/Y slot is allowed on different levels, but two panels cannot occupy the same slot on the same level.
+
+The [six-panel stack example](../examples/calibrated-panels/stacked-levels-draft.json) demonstrates the surface plus three dungeon levels, aligned slots, paired stairs, a one-way pit, game-controlled transport and an unassigned elevator. Import it into an empty workshop; it reuses the sample artwork to demonstrate topology and is not a complete playable dungeon. Regenerate it with `node scripts/generate_stack_example.mjs` after regenerating the calibrated illustrations.
+
+Views and selection do not change draft contents. **Export panel draft** saves the whole draft from either an overview or the editor. Export before refreshing; workshop drafts remain in browser memory until downloaded.

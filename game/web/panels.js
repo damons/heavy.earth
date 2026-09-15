@@ -1,3 +1,4 @@
+import { PanelOverview } from "./panel-overview.js";
 import {
   project,
   unproject,
@@ -293,6 +294,20 @@ export class PanelWorkshop {
     this.panels = [];
     this.images = new Map();
     this.selected = null;
+    this.viewMode = "panel";
+    this.overview = new PanelOverview({
+      select: (id) => {
+        this.selected = id;
+        $("cell-crop-results").hidden = true;
+        this.controls();
+        this.draw();
+      },
+      edit: () => this.setView("panel"),
+    });
+    for (const mode of ["panel", "level", "stack"])
+      $("workshop-view-" + mode).onclick = () => this.setView(mode);
+    $("overview-add").onclick = () => this.setView("panel");
+    $("overview-export").onclick = () => this.export();
     this.previewMask = false;
     this.showGrid = true;
     this.showCells = true;
@@ -350,6 +365,17 @@ export class PanelWorkshop {
         e.returnValue = "";
       }
     });
+  }
+  setView(mode) {
+    this.viewMode = mode;
+    $("panel-detail-layout").hidden = mode !== "panel";
+    $("panel-overview").hidden = mode === "panel";
+    for (const name of ["panel", "level", "stack"]) {
+      const b = $("workshop-view-" + name);
+      b.classList.toggle("active", name === mode);
+      b.setAttribute("aria-pressed", String(name === mode));
+    }
+    this.draw();
   }
   nextSlot() {
     let column = 0;
@@ -482,6 +508,8 @@ export class PanelWorkshop {
     return { x: p.x + this.panel.origin[0], y: p.y + this.panel.origin[1] };
   }
   draw() {
+    if (this.viewMode !== "panel")
+      this.overview.sync(this.panels, this.selected, this.viewMode);
     const p = this.panel,
       c = this.canvas.getContext("2d");
     c.clearRect(0, 0, SIZE, SIZE);

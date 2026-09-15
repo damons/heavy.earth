@@ -212,7 +212,69 @@
         </div>
         <span class="badge">AUTHORING PROTOTYPE</span>
       </div>
-      <div class="panel-layout">
+      <nav class="workshop-views" aria-label="Workshop view">
+        <button id="workshop-view-panel" class="active" aria-pressed="true">
+          Panel
+        </button>
+        <button id="workshop-view-level" aria-pressed="false">Level map</button>
+        <button id="workshop-view-stack" aria-pressed="false">
+          Level stack
+        </button>
+      </nav>
+      <section id="panel-overview" hidden aria-label="Dungeon overview">
+        <div class="overview-toolbar">
+          <label id="overview-level-label"
+            >View level<select id="overview-level"></select
+          ></label>
+          <label class="check"
+            ><input type="checkbox" id="overview-seams" checked /> Panel
+            boundaries</label
+          >
+          <label class="check"
+            ><input type="checkbox" id="overview-links" checked /> Passage and
+            level links</label
+          >
+          <div class="overview-zoom-controls">
+            <button id="overview-zoom-out" aria-label="Zoom map out">−</button
+            ><output id="overview-zoom">100%</output
+            ><button id="overview-zoom-in" aria-label="Zoom map in">+</button
+            ><button id="overview-fit">Fit map</button>
+          </div>
+        </div>
+        <p id="overview-instructions" class="muted"></p>
+        <div class="overview-viewport">
+          <svg
+            id="panel-overview-map"
+            role="group"
+            tabindex="0"
+            aria-label="Dungeon overview. Drag to pan, scroll to zoom. Arrow keys pan; plus and minus zoom; zero fits the map."
+          ></svg>
+          <div id="overview-empty">
+            <h2>Your dungeon, assembled.</h2>
+            <p>Open the Panel view to import a draft or add scanned panels.</p>
+            <button id="overview-add">Open Panel view</button>
+          </div>
+        </div>
+        <div class="overview-selection">
+          <p id="overview-selection" aria-live="polite"></p>
+          <button id="overview-edit" class="secondary">
+            Edit selected panel</button
+          ><button id="overview-export" class="secondary">
+            Export panel draft ↓
+          </button>
+        </div>
+        <p class="muted">
+          Click a panel to select it · Drag to pan · Scroll to zoom · Fit map
+          resets the view
+        </p>
+        <p id="overview-summary" class="muted"></p>
+        <div id="overview-panel-list" aria-label="Panels in this view"></div>
+        <details class="overview-routes" open>
+          <summary>Passage and level destinations</summary>
+          <ul id="overview-route-list"></ul>
+        </details>
+      </section>
+      <div class="panel-layout" id="panel-detail-layout">
         <aside class="panel-controls">
           <label class="file-button" role="button" tabindex="0"
             >Add scanned panel<input

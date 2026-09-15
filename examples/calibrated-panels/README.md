@@ -29,11 +29,12 @@ Any HE8 panel's **grid** can match another HE8 panel. These particular **passage
 - [Gallery](index.html): seamless assembly, separate panels, grid overlay and seam toggle.
 - [Assembled PNG](assembly.png) / [16-inch SVG](assembly.svg).
 - [Four-panel workshop draft](four-panel-draft.json): reviewed cell tags, eight reciprocal passage endpoints and level markers.
+- [Level-stack example](stacked-levels-draft.json): six panels across the surface and three dungeon levels, using the same sample art. Import separately into an empty workshop.
 - [Passage specification](assembly.json), [geometry](geometry.json), [transparent grid](grid-overlay.svg).
 - [Entrance Hall atlas](entrance-cell-art.json): browser-exported transparent diamond cuts.
 - Each numbered panel has an 8-inch SVG, 2400 × 2400 print PNG, 800 × 800 preview, and `-cells.json` sidecar with projected polygons and object footprints.
 
-In an empty **Panel workshop**, choose **Import panel draft**. Hide **Show cell tags** to inspect artwork beneath the exact overlay. Passage destinations are already linked. Stairs, pits and magical transport retain explicit level markers; their destinations use game rules or are unassigned arrivals. This replaces the earlier sample's two-level arrangement so all four physical boards can connect on one level.
+In an empty **Panel workshop**, choose **Import panel draft**. Hide **Show cell tags** to inspect artwork beneath the exact overlay. Choose **Level map** to see all four boards joined; **Level stack** shows the draft’s authored floors. This four-board draft is all on level 1; use the separate stack example to explore several levels. Passage destinations are already linked. Stairs, pits and magical transport retain explicit level markers; their destinations use game rules or are unassigned arrivals. This replaces the earlier sample's two-level arrangement so all four physical boards can connect on one level.
 
 ## Artwork and classification
 
